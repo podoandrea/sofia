@@ -34,10 +34,6 @@ jobs:
             if [ "$ok" = 0 ]; then echo "FAIL $name"; rm -f "$out"; fi
             sleep 1
           done
-          # Keep the page light: max 1600px on the long side, quality 80
-          for f in photos/*.jpg; do
-            [ -f "$f" ] && mogrify -resize '1600x1600>' -strip -interlace Plane -quality 80 "$f"
-          done
           ls -la photos
 
       - name: Commit photos
