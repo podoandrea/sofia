@@ -1,1522 +1,708 @@
 <!DOCTYPE html>
-<html lang="it" class="scroll-smooth">
+<html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SOFIA — Winter Expedition</title>
-  <meta name="description" content="Guida esclusiva per Riccardo, Filippo, Andrea e Martina · Sofia, 27–29 Dicembre" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Sofia Winter Expedition</title>
+  <meta name="description" content="Guida privata per Riccardo, Filippo, Andrea e Martina · Sofia, 27–29 dicembre" />
   <meta name="theme-color" content="#0F172A" />
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Syne:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind CSS (CDN) -->
   <script src="https://cdn.tailwindcss.com/3.4.16"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            night: { DEFAULT: '#0F172A', 900: '#0B1120', 800: '#111C33', 700: '#1E293B', 600: '#334155' },
-            gold: { DEFAULT: '#D4AF37', light: '#F1D67A', dark: '#A8871F' },
+            night: { DEFAULT: '#0F172A', deep: '#0B1220', raised: '#131D33' },
+            gold: { DEFAULT: '#D4AF37', soft: '#E6CB75' },
             pave: '#EAB308',
-            terra: { DEFAULT: '#991B1B', light: '#B91C1C' },
+            terra: '#991B1B',
             snow: '#F8FAFC'
           },
           fontFamily: {
-            cinzel: ['Cinzel', 'serif'],
-            syne: ['Syne', 'sans-serif'],
-            sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif']
-          },
-          boxShadow: {
-            gold: '0 0 0 1px rgba(212,175,55,.25), 0 20px 60px -20px rgba(212,175,55,.35)',
-            glow: '0 0 40px rgba(212,175,55,.35)'
+            display: ['Cinzel', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif']
           }
         }
       }
     };
   </script>
-
-  <!-- Lucide Icons (CDN) -->
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 
   <style>
+    /* Layout: colonna editoriale 1200px, linee sottili come unico ornamento, oro solo come accento */
     :root {
       color-scheme: dark;
-      --night: #0F172A;
+      --bg: #0F172A;
+      --bg-deep: #0B1220;
+      --raised: #131D33;
+      --fg: #F8FAFC;
+      --faint: rgba(248,250,252,.38);
+      --line: rgba(248,250,252,.10);
       --gold: #D4AF37;
       --pave: #EAB308;
       --terra: #991B1B;
-      --snow: #F8FAFC;
     }
-    html, body { background: var(--night); color: var(--snow); }
-    body { font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif; overflow-x: hidden; }
-    ::selection { background: var(--gold); color: var(--night); }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body { background: var(--bg); color: var(--fg); font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; }
+    ::selection { background: var(--gold); color: var(--bg); }
+    h1, h2, h3 { text-wrap: balance; }
+    .wrap { max-width: 1200px; margin-inline: auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+    .eyebrow { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+    .hair { border-color: var(--line); }
+    .tnum { font-variant-numeric: tabular-nums; }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: #0B1120; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(var(--gold), #A8871F); border-radius: 10px; border: 2px solid #0B1120; }
+    /* Photo frame: shows the photo when set, otherwise a quiet typographic plate */
+    .photo { position: relative; overflow: hidden; background: var(--raised); }
+    .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
+    .photo .plate { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 22px;
+      background: radial-gradient(120% 90% at 80% 0%, rgba(212,175,55,.10), transparent 60%), linear-gradient(180deg, #16213A, #0E1628); }
+    .photo .plate .cyr { font-family: Cinzel, Georgia, serif; font-size: clamp(26px, 4.4vw, 42px); line-height: 1.05; color: rgba(248,250,252,.16); letter-spacing: .04em; }
+    .photo .plate .rule { width: 32px; height: 1px; background: var(--gold); margin-top: 14px; opacity: .7; }
+    .photo .credit { position: absolute; right: 10px; bottom: 8px; z-index: 2; font-size: 10px; color: rgba(248,250,252,.75); text-shadow: 0 1px 2px rgba(0,0,0,.7); }
+    .card:hover .photo img { transform: scale(1.04); }
 
-    /* Grain overlay */
-    .grain::after {
-      content: ''; position: fixed; inset: -50%; pointer-events: none; z-index: 60; opacity: .05;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      animation: grain 8s steps(10) infinite;
-    }
-    @keyframes grain { 0%,100%{transform:translate(0,0)} 20%{transform:translate(-5%,4%)} 40%{transform:translate(3%,-6%)} 60%{transform:translate(-4%,2%)} 80%{transform:translate(5%,5%)} }
+    .tilt { transform-style: preserve-3d; transition: transform .35s cubic-bezier(.2,.7,.2,1); }
 
-    .text-gold-gradient {
-      background: linear-gradient(100deg, #A8871F 0%, #F1D67A 30%, #D4AF37 50%, #FFF3C4 62%, #D4AF37 75%, #A8871F 100%);
-      background-size: 220% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
-      animation: shine 6s linear infinite;
-    }
-    @keyframes shine { to { background-position: -220% center; } }
-
-    .glass { background: rgba(15, 23, 42, .55); backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border: 1px solid rgba(248,250,252,.08); }
-    .gold-border { border: 1px solid rgba(212,175,55,.35); }
-    .brutal { box-shadow: 6px 6px 0 0 var(--gold); }
-    .brutal-terra { box-shadow: 6px 6px 0 0 var(--terra); }
-
-    /* Pavé pattern (Sofia's yellow cobblestones) */
-    .pave-pattern {
-      background-color: #EAB308;
-      background-image:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.18) 0 30%, transparent 31%),
-        linear-gradient(90deg, rgba(0,0,0,.18) 2px, transparent 2px),
-        linear-gradient(0deg, rgba(0,0,0,.18) 2px, transparent 2px);
-      background-size: 28px 18px, 28px 18px, 28px 18px;
-    }
-
-    /* Marquee */
-    .marquee { display: flex; width: max-content; animation: marquee 38s linear infinite; }
-    .marquee:hover { animation-play-state: paused; }
-    @keyframes marquee { to { transform: translateX(-50%); } }
-
-    /* Reveal on scroll */
-    .reveal { transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
-    .reveal.pre { opacity: 0; transform: translateY(28px); }
+    /* Reveal: content visible at rest; only blocks below the fold animate in */
+    .reveal { transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+    .reveal.pre { opacity: 0; transform: translateY(16px); }
     .reveal.pre.in { opacity: 1; transform: none; }
 
-    /* 3D cards */
-    .tilt-wrap { perspective: 1200px; }
-    .tilt { transform-style: preserve-3d; transition: transform .25s ease-out, box-shadow .3s; will-change: transform; }
-    .tilt .depth { transform: translateZ(50px); }
-    .tilt .depth-2 { transform: translateZ(80px); }
-    .tilt .glare { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: soft-light;
-      background: radial-gradient(circle at var(--gx,50%) var(--gy,50%), rgba(255,255,255,.55), transparent 55%); opacity: 0; transition: opacity .3s; }
-    .tilt:hover .glare { opacity: 1; }
+    .tab[aria-selected="true"] { color: var(--fg); border-color: var(--gold); }
 
-    /* Image fallback: elegant gradient + domes when Unsplash image cannot load */
-    .img-shell { position: relative; overflow: hidden; background:
-      radial-gradient(120% 80% at 50% 110%, rgba(212,175,55,.35), transparent 60%),
-      radial-gradient(80% 60% at 20% 0%, rgba(153,27,27,.45), transparent 60%),
-      linear-gradient(160deg, #1E293B, #0B1120); }
-    .img-shell .fallback-icon { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(212,175,55,.5); }
-    .img-shell img { position: relative; z-index: 1; }
+    .chk input:checked + .box { background: var(--gold); border-color: var(--gold); }
+    .chk input:checked + .box svg { opacity: 1; }
+    .chk input:checked ~ .txt { color: var(--faint); text-decoration: line-through; text-decoration-color: rgba(212,175,55,.6); }
+    .chk .box svg { opacity: 0; transition: opacity .2s; }
+    .chk input:focus-visible + .box { outline: 2px solid var(--pave); outline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--pave); outline-offset: 3px; }
 
-    /* Timeline */
-    .tl-line { background: linear-gradient(to bottom, transparent, var(--gold) 8%, var(--gold) 92%, transparent); }
-    .tl-dot { box-shadow: 0 0 0 4px rgba(212,175,55,.15), 0 0 20px rgba(212,175,55,.6); }
-    .day-panel { animation: fadeUp .6s cubic-bezier(.2,.7,.2,1) both; }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    @keyframes shake { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-12deg)} 50%{transform:rotate(12deg)} 75%{transform:rotate(-8deg)} }
+    @keyframes nod { 0%,100%{transform:translateY(0)} 30%{transform:translateY(6px)} 60%{transform:translateY(-2px)} }
+    .do-shake { animation: shake .9s ease-in-out 2; transform-origin: 50% 85%; }
+    .do-nod { animation: nod .8s ease-in-out 2; }
 
-    /* Head-gesture demo */
-    @keyframes shake { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-14deg)} 40%{transform:rotate(14deg)} 60%{transform:rotate(-10deg)} 80%{transform:rotate(10deg)} }
-    @keyframes nod { 0%,100%{transform:translateY(0) rotateX(0)} 25%{transform:translateY(7px)} 50%{transform:translateY(-3px)} 75%{transform:translateY(6px)} }
-    .do-shake { animation: shake 1.1s ease-in-out 2; transform-origin: 50% 85%; }
-    .do-nod { animation: nod 1s ease-in-out 2; }
+    #modal { transition: opacity .3s ease; }
+    #modal .sheet { transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+    #modal.off { opacity: 0; pointer-events: none; }
+    #modal.off .sheet { transform: translateY(24px); }
 
-    /* Steam rising from the thermal spring */
-    @keyframes steam { 0% { transform: translateY(0) scaleX(1); opacity: 0; } 30% { opacity: .7; } 100% { transform: translateY(-40px) scaleX(1.6); opacity: 0; } }
-    .steam span { position: absolute; bottom: 0; width: 10px; height: 26px; border-radius: 50%; background: rgba(248,250,252,.5); filter: blur(4px); animation: steam 2.6s ease-in infinite; }
-
-    /* Checkbox */
-    .check-item input:checked + .box { background: var(--gold); border-color: var(--gold); }
-    .check-item input:checked + .box svg { opacity: 1; transform: scale(1); }
-    .check-item input:checked ~ .label { color: rgba(248,250,252,.45); text-decoration: line-through; text-decoration-color: var(--gold); }
-    .check-item .box svg { opacity: 0; transform: scale(.4); transition: all .25s cubic-bezier(.3,1.6,.5,1); }
-    .check-item input:focus-visible + .box { outline: 2px solid var(--pave); outline-offset: 3px; }
-
-    /* Confetti */
-    .confetti { position: fixed; top: -10px; width: 9px; height: 14px; z-index: 100; pointer-events: none; animation: fall linear forwards; }
-    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: .8; } }
-
-    /* Modal */
-    #modal { transition: opacity .35s ease; }
-    #modal .modal-card { transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .35s; }
-    #modal.hidden-modal { opacity: 0; pointer-events: none; }
-    #modal.hidden-modal .modal-card { transform: translateY(40px) scale(.96); opacity: 0; }
-
-    /* Countdown digit flip */
-    .tick { animation: tick .45s cubic-bezier(.3,1.5,.5,1); }
-    @keyframes tick { from { transform: translateY(-30%); opacity: .2; } to { transform: none; opacity: 1; } }
-
-    /* Hero skyline float */
-    @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-    .floaty { animation: floaty 7s ease-in-out infinite; }
-    @keyframes twinkle { 0%,100% { opacity: .2 } 50% { opacity: 1 } }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-      .reveal { opacity: 1; transform: none; }
-    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .reveal.pre { opacity: 1; transform: none; } }
   </style>
 </head>
 
-<body class="antialiased">
+<body>
 
-  <!-- Snow canvas (whole page) -->
-  <canvas id="snow" class="pointer-events-none fixed inset-0 z-40" aria-hidden="true"></canvas>
-
-  <!-- Scroll progress -->
-  <div class="fixed top-0 left-0 right-0 h-[3px] z-[70]">
-    <div id="scrollbar" class="h-full w-0 bg-gradient-to-r from-terra via-gold to-pave"></div>
-  </div>
-
-  <!-- ============ NAV ============ -->
-  <header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500" style="padding-top:env(safe-area-inset-top,0px)">
-    <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="mt-3 flex items-center justify-between rounded-2xl px-4 py-3 transition-all duration-500" id="navInner">
-        <a href="#top" class="flex items-center gap-2 group" aria-label="Torna su">
-          <span class="grid place-items-center w-9 h-9 rounded-xl bg-gold text-night font-cinzel font-black text-lg group-hover:rotate-12 transition">С</span>
-          <span class="font-syne font-extrabold tracking-[.2em] text-sm">SOFIA<span class="text-gold">/</span>26</span>
-        </a>
-        <ul class="hidden md:flex items-center gap-1 text-sm font-medium">
-          <li><a class="nav-link px-3 py-2 rounded-lg hover:text-gold transition" href="#itinerario">Itinerario</a></li>
-          <li><a class="nav-link px-3 py-2 rounded-lg hover:text-gold transition" href="#best">Best of Sofia</a></li>
-          <li><a class="nav-link px-3 py-2 rounded-lg hover:text-gold transition" href="#quirks">Quirks</a></li>
-          <li><a class="nav-link px-3 py-2 rounded-lg hover:text-gold transition" href="#crew">Crew</a></li>
-          <li><a class="nav-link px-3 py-2 rounded-lg hover:text-gold transition" href="#guide">Smart Guide</a></li>
-        </ul>
-        <div class="flex items-center gap-2">
-          <button id="shareBtn" class="hidden sm:inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gold text-night text-sm font-bold hover:bg-gold-light transition" aria-label="Copia il link della guida">
-            <i data-lucide="share-2" class="w-4 h-4"></i><span>Condividi</span>
-          </button>
-          <button id="snowToggle" class="grid place-items-center w-10 h-10 rounded-xl gold-border hover:bg-gold/10 transition" aria-label="Attiva/disattiva la neve" title="Neve on/off">
-            <i data-lucide="snowflake" class="w-5 h-5 text-gold"></i>
-          </button>
-          <button id="menuBtn" class="md:hidden grid place-items-center w-10 h-10 rounded-xl gold-border" aria-label="Apri menu" aria-expanded="false">
-            <i data-lucide="menu" class="w-5 h-5"></i>
-          </button>
-        </div>
-      </div>
-      <!-- Mobile menu -->
-      <div id="mobileMenu" class="md:hidden hidden mt-2 glass rounded-2xl p-3">
-        <a class="block px-4 py-3 rounded-xl hover:bg-gold/10" href="#itinerario">Itinerario</a>
-        <a class="block px-4 py-3 rounded-xl hover:bg-gold/10" href="#best">Best of Sofia</a>
-        <a class="block px-4 py-3 rounded-xl hover:bg-gold/10" href="#quirks">Sofia's Quirks</a>
-        <a class="block px-4 py-3 rounded-xl hover:bg-gold/10" href="#crew">Crew & Checklist</a>
-        <a class="block px-4 py-3 rounded-xl hover:bg-gold/10" href="#guide">Smart Travel Guide</a>
-      </div>
+<!-- NAV -->
+<header id="nav" class="fixed inset-x-0 top-0 z-40 transition-colors duration-300" style="padding-top: env(safe-area-inset-top, 0px)">
+  <div class="wrap flex h-16 items-center justify-between">
+    <a href="#top" class="font-display text-sm tracking-[.35em]">SOFIA <span class="text-gold">·</span> 26</a>
+    <nav class="hidden md:flex items-center gap-8 text-[13px] text-snow/70">
+      <a href="#itinerario" class="nav-link hover:text-snow transition">Itinerario</a>
+      <a href="#luoghi" class="nav-link hover:text-snow transition">Luoghi</a>
+      <a href="#cultura" class="nav-link hover:text-snow transition">Cultura</a>
+      <a href="#crew" class="nav-link hover:text-snow transition">Crew</a>
+      <a href="#info" class="nav-link hover:text-snow transition">Info pratiche</a>
     </nav>
-  </header>
-
-  <main id="top">
-
-    <!-- ============ HERO ============ -->
-    <section class="relative min-h-[100svh] flex flex-col overflow-hidden" aria-labelledby="heroTitle">
-      <!-- Background layers -->
-      <div class="absolute inset-0 -z-0">
-        <div class="absolute inset-0 bg-[linear-gradient(180deg,#070C1A_0%,#0F172A_55%,#1a1426_100%)]"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_0%,rgba(212,175,55,.18),transparent_70%)]"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(50%_40%_at_85%_30%,rgba(153,27,27,.35),transparent_70%)]"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-night/40 via-night/30 to-night"></div>
-        <!-- stars -->
-        <div id="stars" class="absolute inset-0"></div>
-      </div>
-
-      <!-- Skyline SVG : Vitosha + Nevsky Cathedral silhouette -->
-      <svg class="absolute bottom-0 left-0 w-full h-[55%] md:h-[62%] z-0" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-        <defs>
-          <linearGradient id="goldDome" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#FFF3C4" />
-            <stop offset=".35" stop-color="#D4AF37" />
-            <stop offset="1" stop-color="#7A5F12" />
-          </linearGradient>
-          <linearGradient id="mount" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#334155" />
-            <stop offset="1" stop-color="#0F172A" />
-          </linearGradient>
-          <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#1E293B" />
-            <stop offset="1" stop-color="#0B1120" />
-          </linearGradient>
-          <radialGradient id="window" cx=".5" cy=".5" r=".5">
-            <stop offset="0" stop-color="#FDE68A" />
-            <stop offset="1" stop-color="#EAB308" stop-opacity="0" />
-          </radialGradient>
-        </defs>
-        <!-- Vitosha mountain -->
-        <path d="M0 420 L180 300 L300 340 L470 210 L560 250 L720 150 L820 220 L960 170 L1100 260 L1240 220 L1440 330 L1440 600 L0 600 Z" fill="url(#mount)" opacity=".9" />
-        <path d="M470 210 L520 232 L500 236 L540 246 L560 250 L520 260 L490 240 Z M720 150 L765 182 L740 184 L790 200 L820 220 L770 214 L735 192 Z M960 170 L1010 200 L985 202 L1040 220 L1000 225 L970 200 Z" fill="#F8FAFC" opacity=".85" />
-        <!-- city layer -->
-        <path d="M0 500 h60 v-40 h40 v30 h50 v-60 h30 v60 h60 v-30 h40 v50 h70 v-20 h40 v-50 h30 v50 h40 V600 H0 Z" fill="#111C33" />
-        <path d="M1000 600 V500 h50 v-50 h40 v40 h60 v-70 h30 v70 h60 v-30 h50 v40 h60 v-20 h90 V600 Z" fill="#111C33" />
-        <!-- Cathedral -->
-        <g class="floaty" style="transform-origin: 720px 600px">
-          <!-- bell tower -->
-          <rect x="560" y="300" width="70" height="300" fill="url(#body)" />
-          <path d="M560 300 Q595 250 630 300 Z" fill="url(#goldDome)" />
-          <rect x="590" y="225" width="10" height="45" fill="url(#goldDome)" />
-          <ellipse cx="595" cy="265" rx="18" ry="22" fill="url(#goldDome)" />
-          <path d="M595 200 v30 M585 212 h20" stroke="#D4AF37" stroke-width="4" />
-          <!-- main body -->
-          <rect x="620" y="400" width="300" height="200" fill="url(#body)" />
-          <rect x="660" y="340" width="220" height="70" fill="url(#body)" />
-          <!-- side domes -->
-          <path d="M640 405 Q670 345 700 405 Z" fill="url(#goldDome)" />
-          <path d="M840 405 Q870 345 900 405 Z" fill="url(#goldDome)" />
-          <path d="M670 350 v-20 M664 336 h12 M870 350 v-20 M864 336 h12" stroke="#D4AF37" stroke-width="3" />
-          <!-- drum + main dome -->
-          <rect x="700" y="270" width="140" height="75" fill="url(#body)" />
-          <path d="M695 275 Q770 150 845 275 Z" fill="url(#goldDome)" />
-          <path d="M770 168 v-50 M754 135 h32 M758 152 h24" stroke="#D4AF37" stroke-width="5" stroke-linecap="round" />
-          <!-- arches & lit windows -->
-          <g fill="url(#window)">
-            <rect x="715" y="290" width="14" height="40" rx="7" />
-            <rect x="745" y="290" width="14" height="40" rx="7" />
-            <rect x="781" y="290" width="14" height="40" rx="7" />
-            <rect x="811" y="290" width="14" height="40" rx="7" />
-            <rect x="660" y="450" width="20" height="60" rx="10" />
-            <rect x="700" y="450" width="20" height="60" rx="10" />
-            <rect x="820" y="450" width="20" height="60" rx="10" />
-            <rect x="860" y="450" width="20" height="60" rx="10" />
-            <rect x="580" y="340" width="12" height="40" rx="6" />
-            <rect x="600" y="340" width="12" height="40" rx="6" />
-          </g>
-          <path d="M745 600 v-80 q25 -40 50 0 v80 Z" fill="#EAB308" opacity=".65" />
-        </g>
-        <!-- snow ground -->
-        <path d="M0 585 Q360 560 720 580 T1440 575 V600 H0 Z" fill="#F8FAFC" opacity=".9" />
-      </svg>
-
-      <!-- Hero content -->
-      <div class="relative z-10 flex-1 flex flex-col justify-center mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 pt-32 pb-[38vh] md:pb-[40vh]">
-        <div class="flex flex-wrap items-center gap-3 mb-6 reveal">
-          <span class="inline-flex items-center gap-2 rounded-full gold-border px-3 py-1 text-xs tracking-[.25em] uppercase text-gold bg-night/40">
-            <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> София · Bulgaria
-          </span>
-          <span class="inline-flex items-center gap-2 rounded-full bg-terra/80 px-3 py-1 text-xs tracking-[.2em] uppercase font-semibold">
-            <i data-lucide="lock" class="w-3.5 h-3.5"></i> Private Guide
-          </span>
-        </div>
-
-        <h1 id="heroTitle" class="reveal font-cinzel font-black leading-[.85] tracking-tight">
-          <span class="block text-[19vw] sm:text-[15vw] lg:text-[11rem] text-gold-gradient drop-shadow-[0_8px_30px_rgba(212,175,55,.25)]">SOFIA</span>
-          <span class="block mt-2 font-syne font-extrabold text-2xl sm:text-4xl lg:text-5xl tracking-[.18em] uppercase text-snow">
-            Winter <span class="text-transparent [-webkit-text-stroke:1.5px_#F8FAFC]">Expedition</span>
-          </span>
-        </h1>
-
-        <p class="reveal mt-6 max-w-2xl text-base sm:text-lg text-snow/80">
-          Guida esclusiva per <strong class="text-snow">Riccardo, Filippo, Andrea e Martina</strong>
-          <span class="mx-2 text-gold">|</span>
-          <strong class="text-gold">27 – 29 Dicembre</strong>
-        </p>
-
-        <!-- Widgets -->
-        <div class="reveal mt-10 grid gap-4 lg:grid-cols-[1.4fr_1fr] max-w-4xl">
-          <!-- Countdown -->
-          <div class="glass rounded-3xl p-5 sm:p-6 shadow-gold">
-            <div class="flex items-center justify-between mb-4">
-              <p class="font-syne text-xs tracking-[.3em] uppercase text-gold flex items-center gap-2"><i data-lucide="plane-takeoff" class="w-4 h-4"></i><span id="cdLabel">Decollo tra</span></p>
-              <span id="cdTarget" class="text-xs text-snow/50">27.12</span>
-            </div>
-            <div id="countdown" class="grid grid-cols-4 gap-2 sm:gap-3 text-center">
-              <div class="rounded-2xl bg-night/70 border border-white/5 py-3"><div data-cd="d" class="font-syne font-extrabold text-3xl sm:text-5xl tabular-nums">--</div><div class="text-[10px] sm:text-xs uppercase tracking-widest text-snow/50 mt-1">Giorni</div></div>
-              <div class="rounded-2xl bg-night/70 border border-white/5 py-3"><div data-cd="h" class="font-syne font-extrabold text-3xl sm:text-5xl tabular-nums">--</div><div class="text-[10px] sm:text-xs uppercase tracking-widest text-snow/50 mt-1">Ore</div></div>
-              <div class="rounded-2xl bg-night/70 border border-white/5 py-3"><div data-cd="m" class="font-syne font-extrabold text-3xl sm:text-5xl tabular-nums">--</div><div class="text-[10px] sm:text-xs uppercase tracking-widest text-snow/50 mt-1">Min</div></div>
-              <div class="rounded-2xl bg-gold text-night py-3"><div data-cd="s" class="font-syne font-extrabold text-3xl sm:text-5xl tabular-nums">--</div><div class="text-[10px] sm:text-xs uppercase tracking-widest text-night/60 mt-1">Sec</div></div>
-            </div>
-            <p id="cdNote" class="mt-4 text-sm text-snow/60"></p>
-          </div>
-
-          <!-- Weather -->
-          <div class="glass rounded-3xl p-5 sm:p-6 relative overflow-hidden">
-            <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-gold/10 blur-2xl"></div>
-            <div class="flex items-center justify-between mb-3">
-              <p class="font-syne text-xs tracking-[.3em] uppercase text-gold flex items-center gap-2"><i data-lucide="thermometer-snowflake" class="w-4 h-4"></i>Meteo Sofia</p>
-              <span id="wxLive" class="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-white/5 text-snow/50">clima</span>
-            </div>
-            <div class="flex items-end gap-4">
-              <i id="wxIcon" data-lucide="cloud-snow" class="w-12 h-12 text-snow"></i>
-              <div>
-                <div class="font-syne font-extrabold text-5xl leading-none"><span id="wxTemp">-1</span><span class="text-gold">°</span></div>
-                <div id="wxDesc" class="text-sm text-snow/60 mt-1">Fine dicembre: freddo secco, neve possibile</div>
-              </div>
-            </div>
-            <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs">
-              <div class="rounded-xl bg-night/60 py-2"><div class="text-snow/50">Max media</div><div class="font-bold text-base">+3°</div></div>
-              <div class="rounded-xl bg-night/60 py-2"><div class="text-snow/50">Min media</div><div class="font-bold text-base">-4°</div></div>
-              <div class="rounded-xl bg-night/60 py-2"><div class="text-snow/50">Vitosha</div><div class="font-bold text-base">-8°</div></div>
-            </div>
-            <p class="mt-3 text-xs text-snow/50 flex items-center gap-1.5"><i data-lucide="sunset" class="w-3.5 h-3.5 text-pave"></i>Alba ~07:58 · Tramonto ~16:58 · luce breve, pianificate presto!</p>
-          </div>
-        </div>
-
-        <div class="reveal mt-8 flex flex-wrap gap-3">
-          <a href="#itinerario" class="group inline-flex items-center gap-2 rounded-xl bg-gold text-night font-bold px-6 py-3.5 brutal-terra hover:-translate-y-0.5 hover:translate-x-0.5 transition">
-            Scopri l'itinerario <i data-lucide="arrow-down-right" class="w-5 h-5 group-hover:rotate-45 transition"></i>
-          </a>
-          <a href="#crew" class="inline-flex items-center gap-2 rounded-xl gold-border px-6 py-3.5 font-semibold hover:bg-gold/10 transition">
-            <i data-lucide="list-checks" class="w-5 h-5 text-gold"></i> Checklist di gruppo
-          </a>
-        </div>
-      </div>
-
-      <!-- scroll hint -->
-      <a href="#itinerario" class="absolute z-10 bottom-6 left-1/2 -translate-x-1/2 text-night/80 flex flex-col items-center gap-1 text-[10px] tracking-[.3em] uppercase font-bold" aria-label="Scorri giù">
-        <i data-lucide="chevrons-down" class="w-5 h-5 animate-bounce"></i>
-      </a>
-    </section>
-
-    <!-- ============ MARQUEE ============ -->
-    <div class="relative z-10 pave-pattern text-night border-y-4 border-night overflow-hidden -rotate-1 scale-[1.02]">
-      <div class="marquee py-3 font-syne font-extrabold uppercase tracking-wider text-lg sm:text-2xl whitespace-nowrap">
-        <span class="px-6">СОФИЯ ✦ Winter Expedition ✦ 27—29.12 ✦ Расте, но не старее ✦ Nazdrave! ✦ Banitsa ✦ Rakia ✦ Vitosha ✦ Klek Shops ✦ Да = Sì ✦ Не = No ✦</span>
-        <span class="px-6">СОФИЯ ✦ Winter Expedition ✦ 27—29.12 ✦ Расте, но не старее ✦ Nazdrave! ✦ Banitsa ✦ Rakia ✦ Vitosha ✦ Klek Shops ✦ Да = Sì ✦ Не = No ✦</span>
-      </div>
-    </div>
-
-    <!-- ============ ITINERARIO ============ -->
-    <section id="itinerario" class="relative py-24 sm:py-32" aria-labelledby="itTitle">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-[1fr_auto] gap-8 items-end mb-12">
-          <div class="reveal">
-            <p class="font-syne text-xs tracking-[.35em] uppercase text-gold mb-3">01 — Itinerario interattivo</p>
-            <h2 id="itTitle" class="font-cinzel font-bold text-4xl sm:text-6xl leading-tight">Tre giorni,<br /><span class="text-gold-gradient">una città d'oro e di neve.</span></h2>
-          </div>
-          <p class="reveal max-w-md text-snow/60">Seleziona il giorno: ogni tappa è pensata per sfruttare le poche ore di luce invernale e finire al caldo, con un bicchiere di <em>greyano vino</em> in mano.</p>
-        </div>
-
-        <!-- Tabs -->
-        <div role="tablist" aria-label="Giorni del viaggio" id="dayTabs" class="reveal grid grid-cols-3 gap-2 sm:gap-4 mb-10"></div>
-
-        <!-- Panel -->
-        <div id="dayPanel" role="tabpanel" class="grid lg:grid-cols-[320px_1fr] gap-8"></div>
-      </div>
-    </section>
-
-    <!-- ============ BEST OF SOFIA ============ -->
-    <section id="best" class="relative py-24 sm:py-32 bg-night-900 overflow-hidden" aria-labelledby="bestTitle">
-      <div class="absolute inset-0 opacity-[.07] bg-[linear-gradient(rgba(212,175,55,1)_1px,transparent_1px),linear-gradient(90deg,rgba(212,175,55,1)_1px,transparent_1px)] bg-[size:64px_64px]"></div>
-      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal text-center max-w-3xl mx-auto mb-16">
-          <p class="font-syne text-xs tracking-[.35em] uppercase text-gold mb-3">02 — The Best of Sofia</p>
-          <h2 id="bestTitle" class="font-cinzel font-bold text-4xl sm:text-6xl">Quattro icone <span class="text-gold-gradient">imperdibili</span></h2>
-          <p class="mt-4 text-snow/60">Muovi il cursore sulle card, poi toccale per aprire storia, foto e consigli da insider.</p>
-        </div>
-        <div id="bestGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-      </div>
-    </section>
-
-    <!-- ============ QUIRKS ============ -->
-    <section id="quirks" class="relative py-24 sm:py-32" aria-labelledby="quirksTitle">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-          <div>
-            <p class="font-syne text-xs tracking-[.35em] uppercase text-gold mb-3">03 — Cultura unica</p>
-            <h2 id="quirksTitle" class="font-syne font-extrabold uppercase text-5xl sm:text-7xl leading-[.9]">Sofia's<br /><span class="text-terra-light [-webkit-text-stroke:0] text-[#B91C1C]">Quirks</span></h2>
-          </div>
-          <p class="max-w-md text-snow/60">Le stranezze che rendono Sofia diversa da qualsiasi altra capitale europea. Leggetele prima di partire: vi eviteranno qualche equivoco.</p>
-        </div>
-
-        <div class="grid lg:grid-cols-3 gap-6">
-          <!-- Klek -->
-          <article class="reveal group relative rounded-3xl bg-snow text-night p-7 brutal hover:-translate-y-1 transition">
-            <div class="flex items-center justify-between">
-              <span class="font-syne font-extrabold text-6xl text-night/10">01</span>
-              <span class="grid place-items-center w-12 h-12 rounded-2xl bg-night text-gold"><i data-lucide="store" class="w-6 h-6"></i></span>
-            </div>
-            <h3 class="font-syne font-extrabold text-2xl uppercase mt-4">Klek Shops</h3>
-            <p class="text-sm font-semibold text-terra mt-1">клек = "accovacciarsi"</p>
-            <!-- Mini illustration -->
-            <div class="my-6 relative h-36 rounded-2xl bg-[#e2e8f0] overflow-hidden border-2 border-night">
-              <div class="absolute inset-x-0 top-0 h-[62%] bg-[repeating-linear-gradient(90deg,#cbd5e1_0_38px,#94a3b8_38px_40px)]"></div>
-              <div class="absolute inset-x-0 top-[62%] h-1 bg-night"></div>
-              <div class="absolute left-1/2 -translate-x-1/2 top-[64%] w-28 h-12 bg-night rounded-t-md flex items-center justify-center gap-2 text-pave">
-                <i data-lucide="coffee" class="w-4 h-4"></i><i data-lucide="cigarette" class="w-4 h-4"></i><i data-lucide="cookie" class="w-4 h-4"></i>
-              </div>
-              <div class="absolute left-[18%] top-[30%] text-night group-hover:translate-y-6 transition-transform duration-500"><i data-lucide="person-standing" class="w-12 h-12"></i></div>
-              <div class="absolute bottom-0 inset-x-0 h-[22%] pave-pattern"></div>
-            </div>
-            <p class="text-sm text-night/75 leading-relaxed">Negozietti ricavati nelle finestre dei seminterrati, nati negli anni '90 dopo la caduta del regime. Per comprare caffè, snack o sigarette devi letteralmente <strong>piegarti</strong> fino al marciapiede. Cercateli nei quartieri Oborishte e Lozenets.</p>
-          </article>
-
-          <!-- Head gestures -->
-          <article class="reveal group relative rounded-3xl bg-terra p-7 brutal hover:-translate-y-1 transition" style="transition-delay:.1s">
-            <div class="flex items-center justify-between">
-              <span class="font-syne font-extrabold text-6xl text-white/15">02</span>
-              <span class="grid place-items-center w-12 h-12 rounded-2xl bg-night text-gold"><i data-lucide="message-circle-question" class="w-6 h-6"></i></span>
-            </div>
-            <h3 class="font-syne font-extrabold text-2xl uppercase mt-4">Sì o No?</h3>
-            <p class="text-sm font-semibold text-pave mt-1">Il linguaggio del corpo al contrario</p>
-            <div class="my-6 h-36 rounded-2xl bg-night/40 border border-white/10 flex items-center justify-center gap-6">
-              <svg id="head" viewBox="0 0 100 110" class="w-24 h-24" aria-hidden="true">
-                <ellipse cx="50" cy="50" rx="34" ry="38" fill="#F8FAFC" />
-                <path d="M18 40 Q50 0 82 40 Q70 22 50 22 Q30 22 18 40Z" fill="#D4AF37" />
-                <circle cx="38" cy="50" r="4" fill="#0F172A" /><circle cx="62" cy="50" r="4" fill="#0F172A" />
-                <path d="M38 68 Q50 76 62 68" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round" />
-                <rect x="42" y="86" width="16" height="20" fill="#F8FAFC" />
-              </svg>
-              <div id="headLabel" class="font-syne font-extrabold text-xl leading-tight text-center w-24">Prova!</div>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mb-4">
-              <button data-gesture="shake" class="gesture-btn rounded-xl bg-night text-snow font-semibold py-2.5 text-sm hover:bg-night-700 transition flex items-center justify-center gap-2"><i data-lucide="move-horizontal" class="w-4 h-4 text-gold"></i>Scuoti</button>
-              <button data-gesture="nod" class="gesture-btn rounded-xl bg-night text-snow font-semibold py-2.5 text-sm hover:bg-night-700 transition flex items-center justify-center gap-2"><i data-lucide="move-vertical" class="w-4 h-4 text-gold"></i>Annuisci</button>
-            </div>
-            <p class="text-sm text-snow/85 leading-relaxed">In Bulgaria <strong>scuotere la testa</strong> significa <strong>"Sì" (Да, da)</strong> e <strong>annuire</strong> significa <strong>"No" (Не, ne)</strong>. Molti locali che lavorano con turisti si adattano… quindi nel dubbio, chiedete a voce!</p>
-          </article>
-
-          <!-- Thermal springs -->
-          <article class="reveal group relative rounded-3xl bg-night-700 border border-gold/30 p-7 brutal hover:-translate-y-1 transition" style="transition-delay:.2s">
-            <div class="flex items-center justify-between">
-              <span class="font-syne font-extrabold text-6xl text-white/10">03</span>
-              <span class="grid place-items-center w-12 h-12 rounded-2xl bg-gold text-night"><i data-lucide="droplets" class="w-6 h-6"></i></span>
-            </div>
-            <h3 class="font-syne font-extrabold text-2xl uppercase mt-4">Acqua calda in città</h3>
-            <p class="text-sm font-semibold text-gold mt-1">Fontane minerali a ~46 °C</p>
-            <div class="my-6 relative h-36 rounded-2xl bg-gradient-to-b from-night to-[#0c2a3a] border border-white/10 overflow-hidden flex items-end justify-center">
-              <div class="steam absolute bottom-14 left-1/2 -translate-x-1/2 w-24 h-16">
-                <span style="left:10%;animation-delay:0s"></span><span style="left:35%;animation-delay:.6s"></span><span style="left:60%;animation-delay:1.2s"></span><span style="left:80%;animation-delay:1.8s"></span>
-              </div>
-              <div class="mb-3 flex flex-col items-center">
-                <div class="w-3 h-8 bg-gold rounded-t"></div>
-                <div class="w-20 h-6 bg-gold/80 rounded-b-xl"></div>
-              </div>
-              <div class="absolute top-3 right-3 text-xs font-syne font-bold text-pave bg-night/70 px-2 py-1 rounded-lg">46°C</div>
-            </div>
-            <p class="text-sm text-snow/75 leading-relaxed">Sofia sorge su sorgenti termali. Dietro l'antico Bagno Minerale Centrale e vicino alla Moschea Banya Bashi ci sono rubinetti pubblici dove i sofioti riempiono le bottiglie di acqua minerale calda, anche a dicembre, avvolti nel vapore. Gratis.</p>
-          </article>
-        </div>
-
-        <!-- Phrases strip -->
-        <div class="reveal mt-10 grid grid-cols-2 md:grid-cols-4 gap-3" id="phrases"></div>
-      </div>
-    </section>
-
-    <!-- ============ CREW & CHECKLIST ============ -->
-    <section id="crew" class="relative py-24 sm:py-32 bg-night-900 overflow-hidden" aria-labelledby="crewTitle">
-      <div class="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-gold/10 blur-3xl"></div>
-      <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-terra/20 blur-3xl"></div>
-      <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal mb-12">
-          <p class="font-syne text-xs tracking-[.35em] uppercase text-gold mb-3">04 — La spedizione</p>
-          <h2 id="crewTitle" class="font-cinzel font-bold text-4xl sm:text-6xl">The <span class="text-gold-gradient">Crew</span></h2>
-          <p class="mt-4 max-w-2xl text-snow/60">Tocca il tuo nome per dire chi sta spuntando le missioni. Tocca il ruolo per cambiarlo. Tutto viene salvato su questo dispositivo.</p>
-        </div>
-
-        <div id="crewGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-14"></div>
-
-        <div class="grid lg:grid-cols-[340px_1fr] gap-8 items-start">
-          <!-- Progress -->
-          <aside class="reveal lg:sticky lg:top-28 glass rounded-3xl p-6 shadow-gold">
-            <h3 class="font-syne font-extrabold uppercase tracking-wider text-lg">Things To Do Together</h3>
-            <div class="my-6 flex items-center justify-center relative">
-              <svg viewBox="0 0 120 120" class="w-44 h-44 -rotate-90">
-                <circle cx="60" cy="60" r="52" stroke="rgba(248,250,252,.08)" stroke-width="10" fill="none" />
-                <circle id="ring" cx="60" cy="60" r="52" stroke="url(#ringGrad)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition: stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)" />
-                <defs><linearGradient id="ringGrad"><stop offset="0" stop-color="#991B1B" /><stop offset=".5" stop-color="#D4AF37" /><stop offset="1" stop-color="#EAB308" /></linearGradient></defs>
-              </svg>
-              <div class="absolute text-center">
-                <div id="pct" class="font-syne font-extrabold text-4xl">0%</div>
-                <div id="pctCount" class="text-xs text-snow/50">0 / 0</div>
-              </div>
-            </div>
-            <p id="pctMsg" class="text-center text-sm text-snow/70 mb-5">Il viaggio deve ancora cominciare…</p>
-            <div class="flex items-center gap-2 text-xs text-snow/60 mb-4 justify-center">
-              Spunta come: <span id="activeBadge" class="px-2 py-1 rounded-lg bg-gold text-night font-bold">—</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <button id="filterBtn" class="rounded-xl gold-border py-2.5 text-sm font-semibold hover:bg-gold/10 transition flex items-center justify-center gap-2"><i data-lucide="filter" class="w-4 h-4"></i><span>Da fare</span></button>
-              <button id="resetBtn" class="rounded-xl border border-terra/60 text-[#fca5a5] py-2.5 text-sm font-semibold hover:bg-terra/20 transition flex items-center justify-center gap-2"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>Reset</button>
-            </div>
-          </aside>
-
-          <!-- List -->
-          <div>
-            <div id="checkTabs" class="flex flex-wrap gap-2 mb-5"></div>
-            <ul id="checklist" class="grid md:grid-cols-2 gap-3"></ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ SMART TRAVEL GUIDE ============ -->
-    <section id="guide" class="relative py-24 sm:py-32" aria-labelledby="guideTitle">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="reveal mb-12 grid lg:grid-cols-2 gap-6 items-end">
-          <div>
-            <p class="font-syne text-xs tracking-[.35em] uppercase text-gold mb-3">05 — Smart Travel Guide</p>
-            <h2 id="guideTitle" class="font-cinzel font-bold text-4xl sm:text-6xl">Info pratiche, <span class="text-gold-gradient">zero stress.</span></h2>
-          </div>
-          <p class="text-snow/60">Soldi, trasporti e valigia: tutto quello che serve per muoversi a Sofia a fine dicembre come dei local.</p>
-        </div>
-
-        <div class="grid lg:grid-cols-3 gap-6">
-          <!-- Currency -->
-          <article class="reveal rounded-3xl bg-gradient-to-br from-night-700 to-night-800 border border-white/10 p-6 sm:p-7 flex flex-col">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="grid place-items-center w-12 h-12 rounded-2xl bg-gold text-night"><i data-lucide="euro" class="w-6 h-6"></i></span>
-              <div><h3 class="font-syne font-extrabold uppercase text-xl">Valuta</h3><p class="text-xs text-snow/50">Lev (BGN) → Euro (EUR)</p></div>
-            </div>
-            <div class="rounded-2xl bg-pave/15 border border-pave/40 p-4 mb-5 text-sm">
-              <p class="font-semibold text-pave flex items-center gap-2"><i data-lucide="badge-info" class="w-4 h-4"></i>Novità 2026</p>
-              <p class="text-snow/80 mt-1">Dal <strong>1° gennaio 2026 la Bulgaria usa l'Euro</strong>. Niente cambio: pagate come in Italia. Il Lev non è più accettato nei negozi, ma potreste vederlo ancora su vecchi listini o menù.</p>
-            </div>
-            <!-- Converter -->
-            <div class="rounded-2xl bg-night/60 p-4 border border-white/5">
-              <p class="text-xs uppercase tracking-widest text-snow/50 mb-3">Convertitore (tasso fisso 1 € = 1,95583 лв)</p>
-              <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                <label class="block"><span class="sr-only">Euro</span>
-                  <div class="flex items-center rounded-xl bg-night-700 px-3 focus-within:ring-2 ring-gold">
-                    <span class="text-gold font-bold">€</span>
-                    <input id="eur" type="number" inputmode="decimal" min="0" step="0.01" value="10" class="w-full bg-transparent px-2 py-2.5 outline-none font-syne font-bold text-lg" />
-                  </div>
-                </label>
-                <button id="swapBtn" class="grid place-items-center w-9 h-9 rounded-full gold-border hover:rotate-180 transition duration-500" aria-label="Inverti"><i data-lucide="arrow-left-right" class="w-4 h-4 text-gold"></i></button>
-                <label class="block"><span class="sr-only">Lev</span>
-                  <div class="flex items-center rounded-xl bg-night-700 px-3 focus-within:ring-2 ring-gold">
-                    <span class="text-gold font-bold">лв</span>
-                    <input id="bgn" type="number" inputmode="decimal" min="0" step="0.01" class="w-full bg-transparent px-2 py-2.5 outline-none font-syne font-bold text-lg" />
-                  </div>
-                </label>
-              </div>
-            </div>
-            <ul class="mt-5 space-y-2.5 text-sm text-snow/75">
-              <li class="flex gap-2"><i data-lucide="credit-card" class="w-4 h-4 mt-0.5 text-gold shrink-0"></i>Carte contactless accettate quasi ovunque, anche alla metro.</li>
-              <li class="flex gap-2"><i data-lucide="landmark" class="w-4 h-4 mt-0.5 text-gold shrink-0"></i>Prelevate da ATM di banca; evitate quelli "indipendenti" con commissioni alte e rifiutate la "conversione dinamica".</li>
-              <li class="flex gap-2"><i data-lucide="hand-coins" class="w-4 h-4 mt-0.5 text-gold shrink-0"></i>Mancia al ristorante: ~10% è la norma.</li>
-            </ul>
-          </article>
-
-          <!-- Transport -->
-          <article class="reveal rounded-3xl bg-gradient-to-br from-night-700 to-night-800 border border-white/10 p-6 sm:p-7" style="transition-delay:.1s">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="grid place-items-center w-12 h-12 rounded-2xl bg-terra text-snow"><i data-lucide="train-front" class="w-6 h-6"></i></span>
-              <div><h3 class="font-syne font-extrabold uppercase text-xl">Aeroporto → Centro</h3><p class="text-xs text-snow/50">SOF · circa 10 km</p></div>
-            </div>
-            <!-- Metro diagram -->
-            <div class="rounded-2xl bg-night/60 p-4 border border-white/5 mb-5">
-              <div class="flex items-center justify-between text-[11px] uppercase tracking-wider text-snow/50 mb-3"><span>Metro dal Terminal 2</span><span class="text-pave font-bold">~20 min</span></div>
-              <div class="relative flex items-center justify-between">
-                <div class="absolute left-2 right-2 h-1.5 rounded bg-gradient-to-r from-pave via-gold to-terra"></div>
-                <div class="relative flex flex-col items-center gap-2"><span class="w-5 h-5 rounded-full bg-night border-4 border-pave"></span><span class="text-[11px] font-semibold">Летище<br/>T2</span></div>
-                <div class="relative flex flex-col items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-night border-[3px] border-gold"></span><span class="text-[11px] text-snow/50">Mladost</span></div>
-                <div class="relative flex flex-col items-center gap-2"><span class="w-3.5 h-3.5 rounded-full bg-night border-[3px] border-gold"></span><span class="text-[11px] text-snow/50">Sofia Univ.</span></div>
-                <div class="relative flex flex-col items-center gap-2"><span class="w-6 h-6 rounded-full bg-gold border-4 border-night ring-2 ring-gold"></span><span class="text-[11px] font-bold text-gold">Serdika</span></div>
-              </div>
-            </div>
-            <ul class="space-y-3 text-sm text-snow/75">
-              <li class="flex gap-3"><span class="shrink-0 font-syne font-extrabold text-night bg-pave rounded-md px-2 h-6 grid place-items-center text-xs">M4</span><span><strong class="text-snow">Terminal 2:</strong> metro linea M4 (sullo stesso binario della M1) fino a <strong>Serdika</strong>, il cuore della città. Lì cambio con <strong>M2</strong> o <strong>M3</strong>.</span></li>
-              <li class="flex gap-3"><span class="shrink-0 font-syne font-extrabold text-snow bg-terra rounded-md px-2 h-6 grid place-items-center text-xs">T1</span><span><strong class="text-snow">Terminal 1:</strong> navetta gratuita per il T2 e poi metro, oppure bus <strong>84</strong> verso il centro.</span></li>
-              <li class="flex gap-3"><i data-lucide="ticket" class="w-5 h-5 text-gold shrink-0"></i><span>Biglietto singolo circa <strong>0,80 €</strong>: si paga con la carta contactless direttamente al tornello.</span></li>
-              <li class="flex gap-3"><i data-lucide="car-taxi-front" class="w-5 h-5 text-gold shrink-0"></i><span>Taxi: usate solo il desk ufficiale (OK Supertrans) negli arrivi. Al centro circa 10–15 €.</span></li>
-              <li class="flex gap-3"><i data-lucide="mountain-snow" class="w-5 h-5 text-gold shrink-0"></i><span>Vitosha: bus <strong>66</strong> da Hladilnika ad Aleko (~1 h) oppure taxi. Controllate gli orari invernali.</span></li>
-            </ul>
-          </article>
-
-          <!-- Packing -->
-          <article class="reveal rounded-3xl bg-snow text-night p-6 sm:p-7 brutal" style="transition-delay:.2s">
-            <div class="flex items-center gap-3 mb-5">
-              <span class="grid place-items-center w-12 h-12 rounded-2xl bg-night text-gold"><i data-lucide="luggage" class="w-6 h-6"></i></span>
-              <div><h3 class="font-syne font-extrabold uppercase text-xl">In valigia</h3><p class="text-xs text-night/50">Da -8° a +3°: vestitevi a strati</p></div>
-            </div>
-            <ul id="packing" class="space-y-2"></ul>
-            <div class="mt-5 rounded-2xl bg-night text-snow p-4 text-sm flex gap-3">
-              <i data-lucide="plug-zap" class="w-5 h-5 text-pave shrink-0"></i>
-              <p>Prese di tipo <strong>C/F</strong> come in Italia (schuko): niente adattatore per la maggior parte dei caricatori.</p>
-            </div>
-          </article>
-        </div>
-
-        <!-- Quick facts -->
-        <div class="reveal mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="rounded-2xl border border-white/10 p-4 flex items-center gap-3"><i data-lucide="clock" class="w-6 h-6 text-gold"></i><div><div class="text-xs text-snow/50">Fuso orario</div><div class="font-bold">+1 h dall'Italia</div></div></div>
-          <div class="rounded-2xl border border-white/10 p-4 flex items-center gap-3"><i data-lucide="id-card" class="w-6 h-6 text-gold"></i><div><div class="text-xs text-snow/50">Documenti</div><div class="font-bold">Carta d'identità (Schengen)</div></div></div>
-          <div class="rounded-2xl border border-white/10 p-4 flex items-center gap-3"><i data-lucide="siren" class="w-6 h-6 text-[#f87171]"></i><div><div class="text-xs text-snow/50">Emergenze</div><div class="font-bold">112</div></div></div>
-          <div class="rounded-2xl border border-white/10 p-4 flex items-center gap-3"><i data-lucide="smartphone" class="w-6 h-6 text-gold"></i><div><div class="text-xs text-snow/50">Roaming</div><div class="font-bold">UE: come a casa</div></div></div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ============ FOOTER ============ -->
-  <footer class="relative border-t border-white/10 bg-night-900">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 grid md:grid-cols-[1fr_auto] gap-8 items-end">
-      <div>
-        <p class="font-cinzel font-black text-5xl sm:text-7xl text-gold-gradient">СОФИЯ</p>
-        <p class="mt-3 text-snow/60">Riccardo · Filippo · Andrea · Martina — Winter Expedition, 27–29 Dicembre</p>
-      </div>
-      <div class="text-sm text-snow/40 md:text-right">
-        <p>Fatta con <span class="text-terra">♥</span> per la crew. Наздраве!</p>
-        <p class="mt-1">Orari e prezzi possono cambiare: verificate prima di partire.</p>
-        <p class="mt-1">Illustrazioni originali disegnate per questa guida.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ============ MODAL ============ -->
-  <div id="modal" class="hidden-modal fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div id="modalBackdrop" class="absolute inset-0 bg-night/80 backdrop-blur-md"></div>
-    <div class="modal-card relative w-full sm:max-w-4xl max-h-[92svh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-night-800 border border-gold/30 shadow-gold">
-      <button id="modalClose" class="absolute top-4 right-4 z-20 grid place-items-center w-11 h-11 rounded-full bg-night/80 border border-white/10 hover:bg-gold hover:text-night transition" aria-label="Chiudi">
-        <i data-lucide="x" class="w-5 h-5"></i>
+    <div class="flex items-center gap-2">
+      <button id="shareBtn" class="hidden sm:inline-flex items-center gap-2 h-9 px-4 rounded-full border border-gold/50 text-[13px] text-gold hover:bg-gold hover:text-night transition">
+        <i data-lucide="link" class="w-3.5 h-3.5"></i>Copia link
       </button>
-      <div id="modalContent"></div>
+      <button id="menuBtn" class="md:hidden grid place-items-center w-9 h-9 rounded-full border hair" aria-label="Apri il menu" aria-expanded="false"><i data-lucide="menu" class="w-4 h-4"></i></button>
     </div>
   </div>
-
-  <!-- Toast -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
-    <div class="rounded-2xl bg-gold text-night font-semibold px-5 py-3 shadow-glow flex items-center gap-2"><i data-lucide="sparkles" class="w-4 h-4"></i><span id="toastText"></span></div>
+  <div id="mobileMenu" class="md:hidden hidden border-t hair bg-night/95 backdrop-blur">
+    <div class="wrap py-2 flex flex-col text-sm">
+      <a class="py-3 border-b hair" href="#itinerario">Itinerario</a>
+      <a class="py-3 border-b hair" href="#luoghi">Luoghi</a>
+      <a class="py-3 border-b hair" href="#cultura">Cultura</a>
+      <a class="py-3 border-b hair" href="#crew">Crew e checklist</a>
+      <a class="py-3" href="#info">Info pratiche</a>
+    </div>
   </div>
+</header>
 
-  <script>
-  /* =====================================================================
-     DATA — modifica qui testi e foto (URL Unsplash)
-     ===================================================================== */
-  /* ---------------------------------------------------------------------
-     POSTER ART — illustrazioni vettoriali in stile "travel poster".
-     Sono disegnate in SVG direttamente nella pagina: niente foto esterne,
-     quindi si vedono sempre, anche offline e nella pagina condivisa.
-     --------------------------------------------------------------------- */
-  function rng(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
-  function flakes(n, seed, h = 400, op = .9) {
-    const r = rng(seed); let o = '';
-    for (let i = 0; i < n; i++) o += `<circle cx="${(r() * 300).toFixed(1)}" cy="${(r() * h).toFixed(1)}" r="${(r() * 1.6 + .5).toFixed(2)}" fill="#F8FAFC" opacity="${(r() * op * .7 + op * .3).toFixed(2)}"/>`;
-    return o;
-  }
-  function starsSvg(n, seed, h = 160) {
-    const r = rng(seed); let o = '';
-    for (let i = 0; i < n; i++) o += `<circle cx="${(r() * 300).toFixed(1)}" cy="${(r() * h).toFixed(1)}" r="${(r() * .9 + .3).toFixed(2)}" fill="#FFF3C4" opacity="${(r() * .7 + .2).toFixed(2)}"/>`;
-    return o;
-  }
-  function frame(label) {
-    return `<rect x="10" y="10" width="280" height="380" fill="none" stroke="#D4AF37" stroke-opacity=".55" stroke-width="1"/>
-      <rect x="14" y="14" width="272" height="372" fill="none" stroke="#D4AF37" stroke-opacity=".25" stroke-width=".6"/>
-      <text x="150" y="30" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="8" letter-spacing="3.5" fill="#D4AF37" opacity=".85">${label}</text>`;
-  }
-  function trees(list, seed) {
-    return list.map(([x, y, s]) => `<g transform="translate(${x} ${y}) scale(${s})">
-      <path d="M0 -34 L10 -18 L5 -18 L14 -4 L7 -4 L17 10 L-17 10 L-7 -4 L-14 -4 L-5 -18 L-10 -18 Z" fill="#0B1120"/>
-      <path d="M0 -34 L6 -24 L2 -22 Z M-5 -18 L-10 -18 L-8 -14 Z M7 -4 L12 -1 L5 -2 Z M-7 -4 L-12 -1 L-5 -2Z" fill="#F8FAFC" opacity=".85"/>
-      <rect x="-2" y="10" width="4" height="6" fill="#0B1120"/></g>`).join('');
-  }
+<main id="top">
 
-  const POSTERS = {
-    nevsky: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione della Cattedrale Aleksandr Nevskij di notte sotto la neve">
-      <defs>
-        <linearGradient id="pn-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070C1A"/><stop offset=".55" stop-color="#16213B"/><stop offset=".85" stop-color="#5B1A1A"/><stop offset="1" stop-color="#8A3A1A"/></linearGradient>
-        <radialGradient id="pn-halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#F1D67A" stop-opacity=".55"/><stop offset=".6" stop-color="#D4AF37" stop-opacity=".12"/><stop offset="1" stop-color="#D4AF37" stop-opacity="0"/></radialGradient>
-        <linearGradient id="pn-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6D0"/><stop offset=".3" stop-color="#E9C858"/><stop offset=".65" stop-color="#B48A1C"/><stop offset="1" stop-color="#6B4E0C"/></linearGradient>
-        <linearGradient id="pn-wall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2A3550"/><stop offset=".5" stop-color="#3A4766"/><stop offset="1" stop-color="#1C253B"/></linearGradient>
-        <radialGradient id="pn-win" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".6" stop-color="#EAB308"/><stop offset="1" stop-color="#B45309"/></radialGradient>
-        <radialGradient id="pn-lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FDE68A" stop-opacity=".8"/><stop offset="1" stop-color="#FDE68A" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="300" height="400" fill="url(#pn-sky)"/>
-      ${starsSvg(70, 7, 200)}
-      <circle cx="238" cy="70" r="15" fill="#FDF6D8"/><circle cx="245" cy="64" r="14" fill="#0A1122"/>
-      <circle cx="150" cy="185" r="140" fill="url(#pn-halo)"/>
-      <path d="M0 305 h22 v-26 h18 v26 h12 v-40 h16 v40 h170 v-30 h14 v-18 h16 v48 h12 v-22 h20 V400 H0Z" fill="#0E1528"/>
-      <!-- bell tower -->
-      <rect x="38" y="178" width="40" height="150" fill="url(#pn-wall)"/>
-      <rect x="44" y="196" width="8" height="22" rx="4" fill="url(#pn-win)"/><rect x="64" y="196" width="8" height="22" rx="4" fill="url(#pn-win)"/>
-      <rect x="47" y="236" width="22" height="30" rx="11" fill="#0B1120" opacity=".6"/>
-      <path d="M36 180 Q58 146 80 180Z" fill="url(#pn-gold)"/>
-      <rect x="52" y="140" width="12" height="16" fill="url(#pn-wall)"/>
-      <ellipse cx="58" cy="139" rx="9" ry="11" fill="url(#pn-gold)"/>
-      <path d="M58 128 V106 M52 114 H64 M54 120 H62" stroke="#E9C858" stroke-width="2" stroke-linecap="round"/>
-      <!-- main body -->
-      <rect x="72" y="252" width="166" height="78" fill="url(#pn-wall)"/>
-      <rect x="96" y="216" width="118" height="40" fill="url(#pn-wall)"/>
-      <path d="M78 256 Q99 214 120 256Z" fill="url(#pn-gold)"/>
-      <path d="M190 256 Q211 214 232 256Z" fill="url(#pn-gold)"/>
-      <path d="M99 226 V210 M94 216 H104 M211 226 V210 M206 216 H216" stroke="#E9C858" stroke-width="1.6" stroke-linecap="round"/>
-      <path d="M128 218 Q140 200 152 218Z M158 218 Q170 200 182 218Z" fill="url(#pn-gold)" opacity=".9"/>
-      <!-- drum + main dome -->
-      <rect x="116" y="166" width="78" height="52" fill="url(#pn-wall)"/>
-      <path d="M108 170 Q155 74 202 170Z" fill="url(#pn-gold)"/>
-      <path d="M124 160 Q140 112 155 98" stroke="#FFF6D0" stroke-width="2.5" fill="none" opacity=".55" stroke-linecap="round"/>
-      <path d="M155 96 V60 M144 72 H166 M147 82 H163" stroke="#E9C858" stroke-width="2.6" stroke-linecap="round"/>
-      <g fill="url(#pn-win)">
-        <rect x="124" y="178" width="8" height="28" rx="4"/><rect x="140" y="178" width="8" height="28" rx="4"/><rect x="162" y="178" width="8" height="28" rx="4"/><rect x="178" y="178" width="8" height="28" rx="4"/>
-        <rect x="88" y="270" width="12" height="34" rx="6"/><rect x="110" y="270" width="12" height="34" rx="6"/><rect x="188" y="270" width="12" height="34" rx="6"/><rect x="210" y="270" width="12" height="34" rx="6"/>
-        <rect x="108" y="226" width="7" height="20" rx="3.5"/><rect x="195" y="226" width="7" height="20" rx="3.5"/>
-      </g>
-      <path d="M137 330 V292 Q155 268 173 292 V330Z" fill="#EAB308" opacity=".85"/>
-      <path d="M143 330 V296 Q155 280 167 296 V330Z" fill="#FFF3C4" opacity=".7"/>
-      <!-- lamps -->
-      <circle cx="22" cy="300" r="22" fill="url(#pn-lamp)"/><rect x="21" y="300" width="2" height="40" fill="#0B1120"/><circle cx="22" cy="300" r="3" fill="#FFF3C4"/>
-      <circle cx="278" cy="300" r="22" fill="url(#pn-lamp)"/><rect x="277" y="300" width="2" height="40" fill="#0B1120"/><circle cx="278" cy="300" r="3" fill="#FFF3C4"/>
-      <!-- snow -->
-      <path d="M0 330 Q80 318 150 326 T300 324 V400 H0Z" fill="#E8EEF6"/>
-      <path d="M0 348 Q100 338 190 350 T300 346 V400 H0Z" fill="#F8FAFC"/>
-      <path d="M120 400 L145 330 L165 330 L190 400Z" fill="#CBD5E1" opacity=".5"/>
-      <g fill="#0B1120"><circle cx="100" cy="352" r="3"/><rect x="98" y="355" width="4" height="10" rx="2"/><circle cx="108" cy="354" r="2.6"/><rect x="106" y="357" width="4" height="9" rx="2"/></g>
-      ${flakes(90, 11)}
-      ${frame('СОФИЯ · 1912')}
-    </svg>`,
+  <!-- HERO -->
+  <section class="pt-28 pb-16 md:pt-36 md:pb-24">
+    <div class="wrap grid gap-12 lg:grid-cols-[1.05fr_1fr] lg:items-end">
+      <div class="min-w-0">
+        <p class="eyebrow">София · Bulgaria · 27—29.12</p>
+        <h1 class="mt-6 font-display font-medium leading-[.92] text-[clamp(64px,13vw,150px)] tracking-[.02em]">SOFIA</h1>
+        <p class="mt-3 font-display text-[clamp(16px,2.6vw,28px)] tracking-[.3em] text-snow/80">WINTER EXPEDITION</p>
+        <p class="mt-8 max-w-md text-[15px] leading-relaxed text-snow/65">Guida esclusiva per <span class="text-snow">Riccardo, Filippo, Andrea e Martina</span> <span class="text-gold mx-1">|</span> <span class="text-snow">27 – 29 Dicembre</span></p>
 
-    vitosha: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione del Monte Vitosha innevato all'alba con seggiovia e abeti">
-      <defs>
-        <linearGradient id="pv-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16213B"/><stop offset=".38" stop-color="#7A2424"/><stop offset=".62" stop-color="#D97B2B"/><stop offset=".8" stop-color="#F1D67A"/></linearGradient>
-        <linearGradient id="pv-far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8C6A7A"/><stop offset="1" stop-color="#4B4A66"/></linearGradient>
-        <linearGradient id="pv-mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E4A68"/><stop offset="1" stop-color="#26304A"/></linearGradient>
-        <linearGradient id="pv-near" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1C2540"/><stop offset="1" stop-color="#0F172A"/></linearGradient>
-        <linearGradient id="pv-snow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D5DEEB"/></linearGradient>
-      </defs>
-      <rect width="300" height="400" fill="url(#pv-sky)"/>
-      <circle cx="160" cy="200" r="46" fill="#FFF3C4" opacity=".95"/>
-      <circle cx="160" cy="200" r="70" fill="#FFF3C4" opacity=".15"/>
-      <path d="M0 236 L40 214 L78 226 L128 168 L160 190 L196 160 L238 196 L270 184 L300 200 V400 H0Z" fill="url(#pv-far)"/>
-      <path d="M128 168 L140 182 L134 183 L146 194 L128 188 L117 192 L121 182Z M196 160 L210 176 L203 177 L216 188 L196 182 L186 186 L190 176Z" fill="url(#pv-snow)" opacity=".95"/>
-      <path d="M0 270 L44 244 L90 258 L142 222 L188 252 L236 230 L300 254 V400 H0Z" fill="url(#pv-mid)"/>
-      <path d="M142 222 L158 236 L150 237 L166 250 L142 243 L128 248 L134 236Z M236 230 L250 242 L243 243 L258 254 L236 248 L224 252 L229 242Z M44 244 L56 254 L50 255 L60 262 L44 258 L34 262 L38 254Z" fill="url(#pv-snow)" opacity=".9"/>
-      <text x="142" y="214" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="7" fill="#FFF3C4" letter-spacing="1">▲ 2290 m</text>
-      <path d="M0 312 L60 284 L118 300 L176 272 L234 292 L300 278 V400 H0Z" fill="url(#pv-near)"/>
-      <!-- chairlift -->
-      <path d="M8 244 L292 318" stroke="#0B1120" stroke-width="1.2"/>
-      <g stroke="#0B1120" stroke-width="1.1" fill="#991B1B">
-        <line x1="70" y1="260" x2="70" y2="272"/><rect x="64" y="272" width="12" height="6" rx="1"/>
-        <line x1="140" y1="279" x2="140" y2="291"/><rect x="134" y="291" width="12" height="6" rx="1"/>
-        <line x1="210" y1="297" x2="210" y2="309"/><rect x="204" y="309" width="12" height="6" rx="1"/>
-      </g>
-      <path d="M100 252 L104 330 M96 252 H108" stroke="#0B1120" stroke-width="2"/>
-      <path d="M0 336 Q90 316 170 330 T300 322 V400 H0Z" fill="url(#pv-snow)"/>
-      ${trees([[30, 330, 1.1], [52, 338, .8], [250, 322, 1.2], [276, 332, .9], [222, 338, .7], [12, 352, .9]], 3)}
-      <path d="M120 400 Q150 360 196 338" stroke="#C7D2E2" stroke-width="3" fill="none" stroke-dasharray="2 5" stroke-linecap="round"/>
-      ${flakes(60, 21, 400, .8)}
-      ${frame('ВИТОША · 2290 M')}
-    </svg>`,
-
-    serdica: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione in sezione: la città moderna in superficie e le rovine romane di Serdica sotto la strada">
-      <defs>
-        <linearGradient id="ps-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B1120"/><stop offset="1" stop-color="#26304A"/></linearGradient>
-        <linearGradient id="ps-earth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2412"/><stop offset=".5" stop-color="#3B170C"/><stop offset="1" stop-color="#220C06"/></linearGradient>
-        <linearGradient id="ps-stone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#BFAE8C"/><stop offset=".45" stop-color="#F0E6CF"/><stop offset="1" stop-color="#9C8A68"/></linearGradient>
-        <linearGradient id="ps-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3C4" stop-opacity=".55"/><stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></linearGradient>
-        <pattern id="ps-brick" width="20" height="16" patternUnits="userSpaceOnUse"><rect width="20" height="16" fill="#8E2A1C"/><path d="M0 8 H20 M10 0 V8 M0 8 V16 M20 8 V16" stroke="#3B170C" stroke-width="1"/></pattern>
-      </defs>
-      <rect width="300" height="160" fill="url(#ps-sky)"/>
-      ${starsSvg(30, 5, 90)}
-      <!-- modern city -->
-      <g fill="#111C33">
-        <rect x="18" y="86" width="40" height="70"/><rect x="62" y="64" width="34" height="92"/><rect x="200" y="74" width="44" height="82"/><rect x="248" y="96" width="36" height="60"/>
-      </g>
-      <g fill="#EAB308" opacity=".8">
-        <rect x="26" y="96" width="5" height="6"/><rect x="40" y="110" width="5" height="6"/><rect x="70" y="76" width="5" height="6"/><rect x="84" y="98" width="5" height="6"/><rect x="210" y="86" width="5" height="6"/><rect x="226" y="104" width="5" height="6"/><rect x="258" y="108" width="5" height="6"/>
-      </g>
-      <!-- Sveta Nedelya-like dome -->
-      <rect x="112" y="104" width="76" height="52" fill="#1E293B"/><path d="M118 106 Q150 62 182 106Z" fill="#D4AF37"/><path d="M150 72 V56 M144 62 H156" stroke="#D4AF37" stroke-width="2"/>
-      <!-- tram + street (yellow pavé) -->
-      <path d="M0 140 H300" stroke="#334155" stroke-width="1"/>
-      <rect x="216" y="136" width="60" height="18" rx="4" fill="#991B1B"/><rect x="222" y="140" width="48" height="6" fill="#FDE68A" opacity=".8"/>
-      <rect x="0" y="156" width="300" height="10" fill="#EAB308"/>
-      <path d="M0 161 H300" stroke="#A16207" stroke-width=".8" stroke-dasharray="6 3"/>
-      <rect x="0" y="152" width="300" height="5" fill="#F8FAFC" opacity=".9"/>
-      <!-- metro entrance -->
-      <circle cx="40" cy="128" r="10" fill="#F8FAFC"/><text x="40" y="132.5" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="12" fill="#991B1B">M</text>
-      <rect x="39" y="138" width="2" height="18" fill="#F8FAFC"/>
-      <!-- underground -->
-      <rect y="166" width="300" height="234" fill="url(#ps-earth)"/>
-      <path d="M0 196 Q150 188 300 198 M0 232 Q150 240 300 228" stroke="#220C06" stroke-width="1" opacity=".6" fill="none"/>
-      <polygon points="120,166 180,166 230,400 70,400" fill="url(#ps-beam)"/>
-      <!-- opus mixtum wall -->
-      <rect x="18" y="236" width="80" height="120" fill="url(#ps-brick)"/>
-      <rect x="18" y="262" width="80" height="12" fill="#D9CBAA"/><rect x="18" y="304" width="80" height="12" fill="#D9CBAA"/>
-      <path d="M18 236 L30 226 L44 236 L60 222 L76 234 L98 228 L98 236Z" fill="url(#ps-brick)"/>
-      <!-- arch -->
-      <path d="M200 356 V280 Q240 236 280 280 V356 H262 V286 Q240 262 218 286 V356Z" fill="url(#ps-brick)"/>
-      <path d="M200 280 Q240 236 280 280" stroke="#D9CBAA" stroke-width="5" fill="none"/>
-      <!-- columns -->
-      <g>
-        <rect x="118" y="262" width="16" height="94" fill="url(#ps-stone)"/><rect x="112" y="254" width="28" height="9" fill="#E9DFC6"/><rect x="114" y="350" width="24" height="8" fill="#CDBD9A"/>
-        <path d="M150 356 V300 L156 292 L163 302 L166 296 V356Z" fill="url(#ps-stone)"/><rect x="146" y="350" width="24" height="8" fill="#CDBD9A"/>
-        <rect x="178" y="320" width="16" height="36" fill="url(#ps-stone)"/><rect x="174" y="350" width="24" height="8" fill="#CDBD9A"/>
-        <rect x="160" y="340" width="34" height="10" rx="2" fill="#B9A882" transform="rotate(-8 177 345)"/>
-      </g>
-      <!-- mosaic floor -->
-      <rect x="0" y="358" width="300" height="42" fill="#2A120A"/>
-      ${Array.from({ length: 15 }, (_, i) => `<rect x="${i * 20 + 3}" y="364" width="14" height="14" fill="${i % 3 === 0 ? '#D4AF37' : i % 3 === 1 ? '#991B1B' : '#E9DFC6'}" opacity=".85" transform="rotate(45 ${i * 20 + 10} 371)"/>`).join('')}
-      <text x="150" y="394" text-anchor="middle" font-family="Cinzel, serif" font-weight="700" font-size="9" letter-spacing="4" fill="#E9DFC6" opacity=".8">SERDICA · II–VI SEC.</text>
-      <!-- tiny visitors -->
-      <g fill="#0B1120"><circle cx="106" cy="334" r="3"/><rect x="104" y="337" width="4" height="12" rx="2"/></g>
-      ${frame('СЕРДИКА · ROMA ANTICA')}
-    </svg>`,
-
-    vazov: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione del Teatro Nazionale Ivan Vazov illuminato, con fontana e luci di Natale">
-      <defs>
-        <linearGradient id="pt-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A1122"/><stop offset="1" stop-color="#1F2C4A"/></linearGradient>
-        <linearGradient id="pt-red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7F1D1D"/><stop offset=".5" stop-color="#B91C1C"/><stop offset="1" stop-color="#7F1D1D"/></linearGradient>
-        <linearGradient id="pt-col" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CBD5E1"/><stop offset=".5" stop-color="#FFFFFF"/><stop offset="1" stop-color="#B6C2D3"/></linearGradient>
-        <radialGradient id="pt-glow" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#FDE68A" stop-opacity=".35"/><stop offset="1" stop-color="#FDE68A" stop-opacity="0"/></radialGradient>
-        <radialGradient id="pt-win" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#FFF3C4"/><stop offset="1" stop-color="#EAB308"/></radialGradient>
-      </defs>
-      <rect width="300" height="400" fill="url(#pt-sky)"/>
-      ${starsSvg(40, 9, 130)}
-      <ellipse cx="150" cy="230" rx="170" ry="130" fill="url(#pt-glow)"/>
-      <!-- wings -->
-      <rect x="22" y="182" width="64" height="134" fill="url(#pt-red)"/><rect x="214" y="182" width="64" height="134" fill="url(#pt-red)"/>
-      <path d="M18 184 H90 L82 166 H26Z M210 184 H282 L274 166 H218Z" fill="#1E293B"/>
-      <path d="M40 166 Q54 140 68 166Z M232 166 Q246 140 260 166Z" fill="#D4AF37"/>
-      <g fill="url(#pt-win)">
-        <rect x="34" y="200" width="12" height="22" rx="6"/><rect x="62" y="200" width="12" height="22" rx="6"/><rect x="226" y="200" width="12" height="22" rx="6"/><rect x="254" y="200" width="12" height="22" rx="6"/>
-        <rect x="34" y="250" width="12" height="26" rx="6"/><rect x="62" y="250" width="12" height="26" rx="6"/><rect x="226" y="250" width="12" height="26" rx="6"/><rect x="254" y="250" width="12" height="26" rx="6"/>
-      </g>
-      <g fill="#F8FAFC" opacity=".9"><rect x="22" y="236" width="64" height="4"/><rect x="214" y="236" width="64" height="4"/><rect x="22" y="290" width="64" height="4"/><rect x="214" y="290" width="64" height="4"/></g>
-      <!-- central body -->
-      <rect x="80" y="196" width="140" height="120" fill="url(#pt-red)"/>
-      <path d="M72 200 L150 140 L228 200Z" fill="#F8FAFC"/>
-      <path d="M90 194 L150 150 L210 194Z" fill="#E2E8F0"/>
-      <path d="M118 190 Q130 172 140 182 Q150 166 160 182 Q170 172 182 190Z" fill="#D4AF37" opacity=".85"/>
-      <!-- quadriga hint on apex -->
-      <g fill="#D4AF37"><path d="M136 140 l6 -12 l6 6 l4 -10 l4 10 l6 -6 l6 12Z"/><rect x="134" y="138" width="32" height="4"/></g>
-      <rect x="76" y="198" width="148" height="7" fill="#F8FAFC"/>
-      <!-- columns -->
-      <g fill="url(#pt-col)">
-        <rect x="90" y="206" width="9" height="94"/><rect x="112" y="206" width="9" height="94"/><rect x="134" y="206" width="9" height="94"/><rect x="157" y="206" width="9" height="94"/><rect x="179" y="206" width="9" height="94"/><rect x="201" y="206" width="9" height="94"/>
-      </g>
-      <g fill="url(#pt-win)" opacity=".9"><rect x="102" y="250" width="8" height="40" rx="4"/><rect x="146" y="250" width="8" height="40" rx="4"/><rect x="190" y="250" width="8" height="40" rx="4"/></g>
-      <rect x="76" y="298" width="148" height="6" fill="#F8FAFC"/>
-      <rect x="70" y="304" width="160" height="6" fill="#CBD5E1"/><rect x="62" y="310" width="176" height="6" fill="#B6C2D3"/>
-      <!-- string lights -->
-      <path d="M0 120 Q75 160 150 128 T300 120" stroke="#334155" stroke-width="1" fill="none"/>
-      ${Array.from({ length: 13 }, (_, i) => { const x = i * 25; const y = 120 + Math.sin((i / 12) * Math.PI * 2) * -10 + (i < 6 ? 16 * Math.sin(i / 6 * Math.PI) : 0); return `<circle cx="${x}" cy="${y.toFixed(1)}" r="2.6" fill="${i % 2 ? '#EAB308' : '#F8FAFC'}"/><circle cx="${x}" cy="${y.toFixed(1)}" r="7" fill="#FDE68A" opacity=".18"/>`; }).join('')}
-      <!-- ground + fountain -->
-      <path d="M0 318 H300 V400 H0Z" fill="#E8EEF6"/>
-      <path d="M0 340 Q150 330 300 342 V400 H0Z" fill="#F8FAFC"/>
-      <ellipse cx="150" cy="356" rx="62" ry="12" fill="#94A3B8"/>
-      <ellipse cx="150" cy="352" rx="56" ry="9" fill="#1E3A5F"/>
-      <path d="M150 350 Q146 320 150 302 Q154 320 150 350Z" fill="#E0F2FE" opacity=".8"/>
-      <path d="M150 312 Q130 318 118 346 M150 312 Q170 318 182 346 M150 318 Q138 326 132 348 M150 318 Q162 326 168 348" stroke="#E0F2FE" stroke-width="1.6" fill="none" opacity=".75"/>
-      <!-- christmas tree -->
-      <g transform="translate(36 352)">
-        <path d="M0 -70 L18 -40 L10 -40 L26 -14 L16 -14 L32 10 L-32 10 L-16 -14 L-26 -14 L-10 -40 L-18 -40Z" fill="#14532D"/>
-        <path d="M0 -78 l3 7 h7 l-6 4 l2 7 l-6 -4 l-6 4 l2 -7 l-6 -4 h7Z" fill="#EAB308"/>
-        <g fill="#EAB308"><circle cx="-6" cy="-44" r="2"/><circle cx="8" cy="-30" r="2"/><circle cx="-12" cy="-18" r="2"/><circle cx="14" cy="-6" r="2"/><circle cx="-4" cy="0" r="2"/></g>
-        <g fill="#F87171"><circle cx="4" cy="-52" r="1.8"/><circle cx="-14" cy="-4" r="1.8"/><circle cx="18" cy="4" r="1.8"/></g>
-        <rect x="-4" y="10" width="8" height="8" fill="#3B170C"/>
-      </g>
-      ${flakes(70, 31)}
-      ${frame('НАРОДЕН ТЕАТЪР · 1906')}
-    </svg>`
-  };
-
-
-  const TRAVELERS = [
-    { id: 'RM', name: 'Riccardo', surname: 'Martino', grad: 'from-gold to-pave' },
-    { id: 'FR', name: 'Filippo', surname: 'Rizzo', grad: 'from-terra to-[#f87171]' },
-    { id: 'AP', name: 'Andrea', surname: 'Podo', grad: 'from-sky-300 to-indigo-500' },
-    { id: 'MT', name: 'Martina', surname: 'Tamborrella', grad: 'from-emerald-300 to-teal-600' }
-  ];
-  const ROLES = [
-    { label: 'Navigazione', icon: 'compass' },
-    { label: 'Foto & Reel', icon: 'camera' },
-    { label: 'Food hunter', icon: 'utensils' },
-    { label: 'Cassa comune', icon: 'wallet' },
-    { label: 'Playlist', icon: 'music' },
-    { label: 'Storia & cultura', icon: 'book-open' },
-    { label: 'Snow scout', icon: 'snowflake' }
-  ];
-
-  const DAYS = [
-    {
-      n: '01', date: '27 Dic', weekday: 'Domenica', title: 'Arrivo & Luci di Vitosha',
-      mood: 'Benvenuti a Sofia', icon: 'plane-landing', km: '~5 km', temp: '+2° / -4°',
-      summary: 'Atterraggio, check-in e primo assaggio della città tra il boulevard pedonale, le luci natalizie e una cena con musica tradizionale.',
-      steps: [
-        { t: '12:00', icon: 'plane-landing', title: 'Atterraggio a SOF', text: 'Metro M4 dal Terminal 2 fino a Serdika (~20 min) e check-in. Lasciate le valigie e via, la luce finisce presto.', tag: 'Logistica' },
-        { t: '13:30', icon: 'croissant', title: 'Pranzo veloce bulgaro', text: 'Banitsa calda (sfoglia con formaggio sirene) o un kebapche alla griglia: il primo "carburante" della spedizione.', tag: 'Food' },
-        { t: '15:00', icon: 'footprints', title: 'Vitosha Boulevard', text: 'La via pedonale più famosa: caffè, negozi e la montagna innevata sullo sfondo. Arrivate fino al parco del NDK (Palazzo della Cultura).', tag: 'Passeggiata' },
-        { t: '16:58', icon: 'sunset', title: 'Tramonto sul NDK', text: 'Golden hour sulla montagna: è il momento della prima foto di gruppo. Poi si accendono le luci di Natale.', tag: 'Foto' },
-        { t: '17:30', icon: 'gift', title: 'Mercatino di Natale', text: 'Il Sofia Christmas Market nel Giardino della Città (davanti al Teatro Ivan Vazov), se ancora aperto: greyano vino, dolci e artigianato. Piano B: luci in piazza Nevskij.', tag: 'Natale' },
-        { t: '20:00', icon: 'wine', title: 'Cena tipica bulgara', text: 'Hadjidraganov’s Houses (musica folk dal vivo) o Shtastlivetsa su Vitosha Blvd. Ordinate shopska salad, kavarma e un giro di rakia. Prenotate!', tag: 'Cena' }
-      ]
-    },
-    {
-      n: '02', date: '28 Dic', weekday: 'Lunedì', title: 'Cupole d’oro & Neve',
-      mood: 'Immersione storica', icon: 'church', km: '~7 km + montagna', temp: '+3° / -8° in quota',
-      summary: 'Duemila anni di storia in un chilometro quadrato: dalla Serdica romana alle cupole dorate. Pomeriggio sulla neve del Monte Vitosha.',
-      steps: [
-        { t: '08:45', icon: 'coffee', title: 'Colazione da local', text: 'Banitsa + boza (bevanda fermentata dolce-acidula): provatela almeno una volta, è la colazione tipica.', tag: 'Food' },
-        { t: '09:30', icon: 'church', title: 'Cattedrale Aleksandr Nevskij', text: 'Entrate presto per godervi l’interno quasi vuoto, i mosaici e le luci delle candele. Accanto: la basilica di Santa Sofia, che dà il nome alla città.', tag: 'Icona' },
-        { t: '11:00', icon: 'landmark', title: 'Rotonda di San Giorgio', text: 'L’edificio più antico di Sofia (IV secolo), nascosto in un cortile tra i palazzi governativi. Poco distante, il cambio della guardia alla Presidenza.', tag: 'Storia' },
-        { t: '11:45', icon: 'columns-3', title: 'Antica Serdica', text: 'Le rovine romane all’aperto nella stazione metro Serdika e nel Largo: strade, terme e case dell’antica città, gratis.', tag: 'Archeologia' },
-        { t: '13:00', icon: 'soup', title: 'Pranzo caldo', text: 'Zuppa di trippa (shkembe chorba) per i coraggiosi, o una zuppa di fagioli bob chorba per tutti gli altri.', tag: 'Food' },
-        { t: '14:00', icon: 'mountain-snow', title: 'Monte Vitosha', text: 'Taxi o bus 66 verso Aleko (~1.800 m): neve, panorama sulla città e una cioccolata calda in baita. Alternativa: Zlatnite Mostove, il "fiume di pietre".', tag: 'Neve' },
-        { t: '20:30', icon: 'glass-water', title: 'Cena & rakia bar', text: 'Rientrati in città, cena calda e un brindisi: "Наздраве!" (Nazdrave). Guardatevi negli occhi, è d’obbligo.', tag: 'Night' }
-      ]
-    },
-    {
-      n: '03', date: '29 Dic', weekday: 'Martedì', title: 'Sofia Segreta & Relax',
-      mood: 'Local life', icon: 'key-round', km: '~6 km', temp: '+2° / -3°',
-      summary: 'La Sofia che non sta sulle cartoline: negozi al livello del marciapiede, acqua calda che sgorga in strada, mercati e un gran finale a teatro.',
-      steps: [
-        { t: '10:00', icon: 'store', title: 'Caccia ai Klek Shops', text: 'Passeggiata tra Oborishte e il Doctor’s Garden alla ricerca dei negozietti nei seminterrati. Premio: un caffè comprato accovacciati.', tag: 'Quirk' },
-        { t: '11:15', icon: 'droplets', title: 'Fontane termali', text: 'Dietro il Bagno Minerale Centrale (oggi museo) i rubinetti di acqua calda naturale. A due passi: Moschea Banya Bashi e la Sinagoga.', tag: 'Relax' },
-        { t: '12:15', icon: 'shopping-basket', title: 'Mercati', text: 'Halite, il mercato coperto storico, e lo Zhenski Pazar ("mercato delle donne") per spezie, miele e frutta secca.', tag: 'Local' },
-        { t: '13:30', icon: 'utensils', title: 'Pranzo', text: 'Mekitsi (frittelle) con yogurt bulgaro e marmellata: il comfort food perfetto.', tag: 'Food' },
-        { t: '15:00', icon: 'gem', title: 'Souvenir', text: 'Mercatino dell’antiquariato vicino alla Nevskij (icone, vecchie macchine fotografiche) e prodotti all’olio di rosa bulgaro.', tag: 'Shopping' },
-        { t: '17:00', icon: 'drama', title: 'Teatro Ivan Vazov', text: 'Foto della facciata illuminata e, se il programma lo permette, uno spettacolo (anche in bulgaro, l’atmosfera merita).', tag: 'Cultura' },
-        { t: '20:00', icon: 'party-popper', title: 'Cena d’addio', text: 'Ultimo brindisi della spedizione: si vota il momento migliore del viaggio e si completa la checklist!', tag: 'Finale' }
-      ]
-    }
-  ];
-
-  const PLACES = [
-    {
-      id: 'nevsky', title: 'Cattedrale Aleksandr Nevskij', short: 'Cupole d’oro', icon: 'church', year: '1882–1912',
-      lead: 'Il simbolo di Sofia: una delle più grandi cattedrali ortodosse dei Balcani, con 12 cupole e la cupola centrale rivestita d’oro.',
-      story: 'Costruita in stile neo-bizantino in memoria dei soldati russi caduti nella guerra di liberazione della Bulgaria dal dominio ottomano (1877–78), prende il nome dal principe-santo Aleksandr Nevskij. All’interno: marmi italiani, mosaici veneziani, alabastro brasiliano e un’acustica incredibile. Nella cripta c’è la più grande collezione di icone ortodosse del paese.',
-      tips: ['Andateci la mattina presto o durante una liturgia: i canti sono da brividi.', 'Ingresso gratuito; la cripta-museo delle icone è a pagamento.', 'Di sera la cattedrale illuminata con la neve è la foto del viaggio.'],
-      info: [['clock', 'Aperta tutti i giorni'], ['ticket', 'Gratis'], ['map-pin', 'Pl. Aleksandar Nevski']]
-    },
-    {
-      id: 'vitosha', title: 'Monte Vitosha', short: 'Neve a 30 minuti', icon: 'mountain-snow', year: '2.290 m',
-      lead: 'La montagna di casa dei sofioti: parco naturale dal 1934, il più antico dei Balcani, che domina la città a sud.',
-      story: 'Il Cherni Vrah ("Picco Nero") tocca i 2.290 metri. In inverno l’area di Aleko diventa una piccola stazione sciistica, ma anche senza sci è perfetta per una passeggiata sulla neve. Le "Zlatnite Mostove" (Ponti d’Oro) sono un fiume di massi giganti formatosi durante l’era glaciale.',
-      tips: ['Scarpe impermeabili e antiscivolo obbligatorie.', 'In quota fa 6–10° in meno che in città.', 'Partite entro le 14: alle 17 è già buio.'],
-      info: [['bus', 'Bus 66 / taxi'], ['thermometer-snowflake', '~ -8 °C'], ['timer', '~1 h dal centro']]
-    },
-    {
-      id: 'serdica', title: 'Antica Serdica', short: 'Roma sotto la metro', icon: 'columns-3', year: 'II–VI sec.',
-      lead: 'Sotto i piedi del centro c’è la città romana di Serdica, l’antenata di Sofia, che Costantino chiamava "la mia Roma".',
-      story: 'Durante gli scavi per la metropolitana sono emersi strade lastricate, terme, edifici e una basilica paleocristiana. Oggi il Complesso Archeologico Serdica si visita all’aperto e gratuitamente, a metà tra le banchine e la piazza: uno degli esempi più affascinanti di città stratificata in Europa.',
-      tips: ['È sulla strada: abbinatela alla Rotonda di San Giorgio.', 'Guardate anche la chiesa di Sveta Petka, semi-interrata proprio lì accanto.', 'Ottima tappa se fa troppo freddo: è in parte coperta.'],
-      info: [['train-front', 'Metro Serdika'], ['ticket', 'Gratis'], ['hourglass', '1.800+ anni']]
-    },
-    {
-      id: 'vazov', title: 'Teatro Nazionale Ivan Vazov', short: 'Palcoscenico neoclassico', icon: 'drama', year: '1906',
-      lead: 'Il teatro più importante della Bulgaria, con la facciata rossa e bianca e il frontone con Apollo e le muse.',
-      story: 'Progettato dagli architetti viennesi Fellner & Helmer (gli stessi di molti teatri dell’Impero austro-ungarico) e intitolato al più grande scrittore bulgaro, Ivan Vazov. Davanti c’è il Giardino della Città con la fontana: durante le feste è il cuore del mercatino di Natale.',
-      tips: ['Controllate il programma online: a fine dicembre ci sono spettacoli speciali.', 'Anche senza biglietto, la facciata illuminata vale la sosta.', 'Il giardino di fronte è il punto d’incontro preferito dei sofioti.'],
-      info: [['calendar', 'Spettacoli serali'], ['map-pin', 'Ul. Dyakon Ignatiy 5'], ['trees', 'Giardino della Città']]
-    }
-  ];
-
-  const PHRASES = [
-    { bg: 'Здравейте', tr: 'Zdraveyte', it: 'Ciao / Salve' },
-    { bg: 'Благодаря', tr: 'Blagodarya', it: 'Grazie' },
-    { bg: 'Наздраве!', tr: 'Nazdrave!', it: 'Salute! (brindisi)' },
-    { bg: 'Сметката, моля', tr: 'Smetkata, molya', it: 'Il conto, per favore' }
-  ];
-
-  const CHECKLIST = [
-    { id: 'c1', cat: 'Icone', icon: 'church', text: 'Selfie di gruppo davanti alle cupole d’oro della Nevskij' },
-    { id: 'c2', cat: 'Icone', icon: 'landmark', text: 'Visitare la Rotonda di San Giorgio + cambio della guardia' },
-    { id: 'c3', cat: 'Icone', icon: 'columns-3', text: 'Trovare le rovine romane di Serdica nella metro' },
-    { id: 'c4', cat: 'Icone', icon: 'drama', text: 'Foto al Teatro Ivan Vazov illuminato' },
-    { id: 'c5', cat: 'Food', icon: 'croissant', text: 'Colazione con banitsa + boza' },
-    { id: 'c6', cat: 'Food', icon: 'salad', text: 'Mangiare una vera shopska salad' },
-    { id: 'c7', cat: 'Food', icon: 'wine', text: 'Brindare con rakia guardandosi negli occhi' },
-    { id: 'c8', cat: 'Food', icon: 'cup-soda', text: 'Bere greyano vino (vin brulé) al mercatino' },
-    { id: 'c9', cat: 'Avventura', icon: 'mountain-snow', text: 'Toccare la neve sul Monte Vitosha' },
-    { id: 'c10', cat: 'Avventura', icon: 'footprints', text: 'Percorrere tutto Vitosha Boulevard fino al NDK' },
-    { id: 'c11', cat: 'Avventura', icon: 'snowflake', text: 'Battaglia di palle di neve (se nevica!)' },
-    { id: 'c12', cat: 'Quirks', icon: 'store', text: 'Comprare qualcosa in un Klek Shop (accovacciati!)' },
-    { id: 'c13', cat: 'Quirks', icon: 'droplets', text: 'Riempire una bottiglia alle fontane termali' },
-    { id: 'c14', cat: 'Quirks', icon: 'move-horizontal', text: 'Rispondere "sì" scuotendo la testa con un local' },
-    { id: 'c15', cat: 'Quirks', icon: 'languages', text: 'Leggere un’insegna in cirillico senza aiuto' },
-    { id: 'c16', cat: 'Souvenir', icon: 'flower-2', text: 'Comprare un prodotto all’olio di rosa' },
-    { id: 'c17', cat: 'Souvenir', icon: 'gem', text: 'Curiosare al mercatino d’antiquariato della Nevskij' },
-    { id: 'c18', cat: 'Souvenir', icon: 'camera', text: 'Foto finale della crew all’ultima cena' }
-  ];
-
-  const PACKING = [
-    { id: 'p1', text: 'Piumino o giacca imbottita antivento' },
-    { id: 'p2', text: 'Strati termici (maglia + leggings)' },
-    { id: 'p3', text: 'Berretto, guanti touch e sciarpa' },
-    { id: 'p4', text: 'Scarponcini impermeabili antiscivolo' },
-    { id: 'p5', text: 'Calze di lana (2 paia extra)' },
-    { id: 'p6', text: 'Power bank: il freddo scarica le batterie' },
-    { id: 'p7', text: 'Burrocacao e crema mani' },
-    { id: 'p8', text: 'Carta d’identità valida per l’espatrio + TEAM' },
-    { id: 'p9', text: 'Borraccia termica (per le fontane calde!)' }
-  ];
-
-  /* =====================================================================
-     STORAGE helpers (try/catch: funziona anche senza localStorage)
-     ===================================================================== */
-  const store = {
-    get(k, d) { try { const v = localStorage.getItem('sofia26:' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
-    set(k, v) { try { localStorage.setItem('sofia26:' + k, JSON.stringify(v)); } catch {} }
-  };
-
-  const $ = (s, r = document) => r.querySelector(s);
-  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const icons = () => window.lucide && lucide.createIcons();
-
-  function toast(msg) {
-    const t = $('#toast'); $('#toastText').textContent = msg;
-    t.style.opacity = '1'; t.style.transform = 'translate(-50%,0)';
-    clearTimeout(toast._t);
-    toast._t = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%,16px)'; }, 2200);
-  }
-
-
-  /* =====================================================================
-     HERO: stars, countdown, weather
-     ===================================================================== */
-  (function stars() {
-    const s = $('#stars'); let h = '';
-    for (let i = 0; i < 60; i++) {
-      const size = Math.random() * 2 + 1;
-      h += `<span class="absolute rounded-full bg-snow" style="width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*50}%;animation:twinkle ${2+Math.random()*4}s ease-in-out ${Math.random()*4}s infinite"></span>`;
-    }
-    s.innerHTML = h;
-  })();
-
-  (function countdown() {
-    // Sofia = UTC+2 in inverno
-    const now = new Date();
-    let year = now.getFullYear();
-    let start = new Date(`${year}-12-27T00:00:00+02:00`);
-    let end = new Date(`${year}-12-30T00:00:00+02:00`);
-    if (now >= end) { year++; start = new Date(`${year}-12-27T00:00:00+02:00`); end = new Date(`${year}-12-30T00:00:00+02:00`); }
-    $('#cdTarget').textContent = `27.12.${year}`;
-    const el = { d: $('[data-cd="d"]'), h: $('[data-cd="h"]'), m: $('[data-cd="m"]'), s: $('[data-cd="s"]') };
-    const prev = {};
-    function set(k, v) {
-      const str = String(v).padStart(2, '0');
-      if (prev[k] !== str) { el[k].textContent = str; el[k].classList.remove('tick'); void el[k].offsetWidth; el[k].classList.add('tick'); prev[k] = str; }
-    }
-    function update() {
-      const n = new Date();
-      if (n >= start && n < end) {
-        const day = Math.floor((n - start) / 864e5) + 1;
-        $('#cdLabel').textContent = `Siamo a Sofia · Giorno ${day}`;
-        const left = end - n;
-        set('d', Math.floor(left / 864e5)); set('h', Math.floor(left / 36e5) % 24); set('m', Math.floor(left / 6e4) % 60); set('s', Math.floor(left / 1e3) % 60);
-        $('#cdNote').textContent = 'Tempo rimasto della spedizione: godetevelo tutto!';
-        return;
-      }
-      const diff = Math.max(0, start - n);
-      const d = Math.floor(diff / 864e5);
-      set('d', d); set('h', Math.floor(diff / 36e5) % 24); set('m', Math.floor(diff / 6e4) % 60); set('s', Math.floor(diff / 1e3) % 60);
-      $('#cdNote').textContent = d > 30 ? 'Iniziate a cercare i voli migliori e prenotate la cena del primo giorno.'
-        : d > 7 ? 'Ultime settimane: controllate documenti e preparate gli strati termici.'
-        : 'Ci siamo quasi! Valigia pronta e power bank carico.';
-    }
-    update(); setInterval(update, 1000);
-  })();
-
-  (async function weather() {
-    const codes = {
-      0: ['Sereno e frizzante', 'sun'], 1: ['Quasi sereno', 'cloud-sun'], 2: ['Parz. nuvoloso', 'cloud-sun'], 3: ['Coperto', 'cloud'],
-      45: ['Nebbia', 'cloud-fog'], 48: ['Nebbia gelata', 'cloud-fog'], 51: ['Pioviggine', 'cloud-drizzle'], 53: ['Pioviggine', 'cloud-drizzle'], 55: ['Pioviggine', 'cloud-drizzle'],
-      61: ['Pioggia', 'cloud-rain'], 63: ['Pioggia', 'cloud-rain'], 65: ['Pioggia forte', 'cloud-rain'], 66: ['Pioggia gelata', 'cloud-hail'], 67: ['Pioggia gelata', 'cloud-hail'],
-      71: ['Neve leggera', 'cloud-snow'], 73: ['Neve', 'cloud-snow'], 75: ['Neve intensa', 'snowflake'], 77: ['Granelli di neve', 'snowflake'],
-      80: ['Rovesci', 'cloud-rain-wind'], 81: ['Rovesci', 'cloud-rain-wind'], 82: ['Rovesci forti', 'cloud-rain-wind'], 85: ['Rovesci di neve', 'cloud-snow'], 86: ['Rovesci di neve', 'cloud-snow'],
-      95: ['Temporale', 'cloud-lightning'], 96: ['Temporale', 'cloud-lightning'], 99: ['Temporale', 'cloud-lightning']
-    };
-    try {
-      const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.6977&longitude=23.3219&current=temperature_2m,weather_code,wind_speed_10m&timezone=Europe%2FSofia');
-      if (!r.ok) throw 0;
-      const j = await r.json();
-      const c = j.current; const [desc, ic] = codes[c.weather_code] || ['Variabile', 'cloud'];
-      $('#wxTemp').textContent = Math.round(c.temperature_2m);
-      $('#wxDesc').textContent = `Adesso: ${desc} · vento ${Math.round(c.wind_speed_10m)} km/h`;
-      $('#wxLive').textContent = '● live'; $('#wxLive').classList.add('text-pave');
-      const i = $('#wxIcon'); const ni = document.createElement('i'); ni.id = 'wxIcon'; ni.setAttribute('data-lucide', ic); ni.className = i.getAttribute('class') || 'w-12 h-12 text-snow'; i.replaceWith(ni); icons();
-    } catch { /* resta il clima medio di fine dicembre */ }
-  })();
-
-  /* =====================================================================
-     ITINERARY
-     ===================================================================== */
-  let activeDay = store.get('day', 0);
-  function renderTabs() {
-    $('#dayTabs').innerHTML = DAYS.map((d, i) => `
-      <button role="tab" aria-selected="${i === activeDay}" data-day="${i}"
-        class="day-tab group relative text-left rounded-2xl p-3 sm:p-5 border transition-all duration-300 overflow-hidden
-        ${i === activeDay ? 'bg-gold text-night border-gold brutal-terra' : 'bg-night-800 border-white/10 hover:border-gold/50'}">
-        <span class="block font-syne font-extrabold text-3xl sm:text-6xl leading-none ${i === activeDay ? 'text-night' : 'text-snow/15 group-hover:text-gold/40'} transition">${d.n}</span>
-        <span class="block mt-2 text-[11px] sm:text-xs uppercase tracking-[.2em] font-bold ${i === activeDay ? 'text-night/70' : 'text-gold'}">${d.date}</span>
-        <span class="hidden sm:block font-semibold mt-1">${d.title}</span>
-      </button>`).join('');
-    $$('.day-tab').forEach(b => b.addEventListener('click', () => { activeDay = +b.dataset.day; store.set('day', activeDay); renderTabs(); renderDay(); }));
-  }
-  function renderDay() {
-    const d = DAYS[activeDay];
-    $('#dayPanel').innerHTML = `
-      <aside class="day-panel lg:sticky lg:top-28 self-start rounded-3xl bg-gradient-to-br from-night-700 to-night-800 border border-white/10 p-6 relative overflow-hidden">
-        <div class="absolute -right-8 -bottom-8 opacity-10"><i data-lucide="${d.icon}" class="w-44 h-44 text-gold"></i></div>
-        <p class="text-xs uppercase tracking-[.3em] text-gold font-bold">${d.weekday} · ${d.date}</p>
-        <h3 class="font-cinzel font-bold text-3xl mt-2">${d.title}</h3>
-        <p class="text-sm text-pave font-semibold mt-1">${d.mood}</p>
-        <p class="text-snow/70 mt-4 text-sm leading-relaxed relative">${d.summary}</p>
-        <div class="grid grid-cols-2 gap-2 mt-6 relative">
-          <div class="rounded-xl bg-night/60 p-3"><i data-lucide="footprints" class="w-4 h-4 text-gold mb-1"></i><div class="text-xs text-snow/50">A piedi</div><div class="font-bold text-sm">${d.km}</div></div>
-          <div class="rounded-xl bg-night/60 p-3"><i data-lucide="thermometer" class="w-4 h-4 text-gold mb-1"></i><div class="text-xs text-snow/50">Temperature</div><div class="font-bold text-sm">${d.temp}</div></div>
-        </div>
-        <div class="flex gap-2 mt-6 relative">
-          <button class="day-nav flex-1 rounded-xl border border-white/10 py-2.5 text-sm hover:border-gold disabled:opacity-30 flex items-center justify-center gap-1" data-dir="-1" ${activeDay === 0 ? 'disabled' : ''}><i data-lucide="chevron-left" class="w-4 h-4"></i>Prima</button>
-          <button class="day-nav flex-1 rounded-xl border border-white/10 py-2.5 text-sm hover:border-gold disabled:opacity-30 flex items-center justify-center gap-1" data-dir="1" ${activeDay === DAYS.length - 1 ? 'disabled' : ''}>Dopo<i data-lucide="chevron-right" class="w-4 h-4"></i></button>
-        </div>
-      </aside>
-      <ol class="relative pl-8 sm:pl-12">
-        <div class="tl-line absolute left-[11px] sm:left-[19px] top-0 bottom-0 w-[2px]"></div>
-        ${d.steps.map((s, i) => `
-          <li class="day-panel relative mb-5 last:mb-0" style="animation-delay:${i * 70}ms">
-            <span class="tl-dot absolute -left-8 sm:-left-12 top-5 grid place-items-center w-6 h-6 sm:w-10 sm:h-10 rounded-full bg-night border-2 border-gold">
-              <i data-lucide="${s.icon}" class="w-3 h-3 sm:w-4 sm:h-4 text-gold"></i>
-            </span>
-            <article class="group rounded-2xl bg-night-800/80 border border-white/5 hover:border-gold/40 p-5 transition hover:-translate-y-0.5 hover:shadow-gold">
-              <div class="flex flex-wrap items-center gap-3 mb-2">
-                <span class="font-syne font-extrabold text-xl text-gold tabular-nums">${s.t}</span>
-                <span class="text-[10px] uppercase tracking-widest font-bold px-2 py-1 rounded-md bg-terra/30 text-[#fca5a5]">${s.tag}</span>
-              </div>
-              <h4 class="font-bold text-lg">${s.title}</h4>
-              <p class="text-sm text-snow/65 mt-1 leading-relaxed">${s.text}</p>
-            </article>
-          </li>`).join('')}
-      </ol>`;
-    $$('.day-nav').forEach(b => b.addEventListener('click', () => {
-      activeDay = Math.min(DAYS.length - 1, Math.max(0, activeDay + +b.dataset.dir)); store.set('day', activeDay); renderTabs(); renderDay();
-      $('#itinerario').scrollIntoView({ behavior: 'smooth' });
-    }));
-    icons();
-  }
-
-  /* =====================================================================
-     BEST OF SOFIA — 3D cards + modal
-     ===================================================================== */
-  function renderBest() {
-    $('#bestGrid').innerHTML = PLACES.map((p, i) => `
-      <div class="tilt-wrap reveal" style="transition-delay:${i * 90}ms">
-        <button class="tilt place-card group relative w-full text-left rounded-3xl overflow-hidden border border-gold/25 bg-night-800 aspect-[3/4] focus:outline-none focus-visible:ring-2 ring-pave" data-place="${p.id}" aria-label="Approfondisci: ${p.title}">
-          <div class="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.06]">${POSTERS[p.id]()}</div>
-          <div class="absolute inset-x-0 bottom-0 h-[58%] z-[2] bg-gradient-to-t from-night via-night/85 to-transparent"></div>
-          <div class="absolute top-10 left-6 right-6 z-[3] flex justify-between items-start depth">
-            <span class="font-syne font-extrabold text-xs tracking-widest uppercase bg-gold text-night px-2.5 py-1 rounded-lg">${p.year}</span>
-            <span class="grid place-items-center w-10 h-10 rounded-full glass"><i data-lucide="${p.icon}" class="w-5 h-5 text-gold"></i></span>
+        <div class="mt-12">
+          <p class="text-[11px] uppercase tracking-[.25em] text-snow/45" id="cdLabel">Alla partenza mancano</p>
+          <div class="mt-4 grid grid-cols-4 max-w-md border-y hair divide-x divide-white/10">
+            <div class="py-4 pr-3"><div data-cd="d" class="font-display text-3xl sm:text-5xl tnum">--</div><div class="mt-1 text-[10px] uppercase tracking-[.2em] text-snow/40">Giorni</div></div>
+            <div class="py-4 px-3"><div data-cd="h" class="font-display text-3xl sm:text-5xl tnum">--</div><div class="mt-1 text-[10px] uppercase tracking-[.2em] text-snow/40">Ore</div></div>
+            <div class="py-4 px-3"><div data-cd="m" class="font-display text-3xl sm:text-5xl tnum">--</div><div class="mt-1 text-[10px] uppercase tracking-[.2em] text-snow/40">Minuti</div></div>
+            <div class="py-4 pl-3"><div data-cd="s" class="font-display text-3xl sm:text-5xl tnum text-gold">--</div><div class="mt-1 text-[10px] uppercase tracking-[.2em] text-snow/40">Secondi</div></div>
           </div>
-          <div class="absolute bottom-0 inset-x-0 z-[3] p-6 pb-7 depth-2">
-            <p class="text-xs uppercase tracking-[.25em] text-pave font-bold">${p.short}</p>
-            <h3 class="font-cinzel font-bold text-2xl leading-tight mt-1">${p.title}</h3>
-            <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gold">Scopri di più <i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
-          </div>
-          <div class="glare z-[4]"></div>
-        </button>
-      </div>`).join('');
-
-    $$('.tilt').forEach(card => {
-      const fine = window.matchMedia('(pointer:fine)').matches;
-      if (fine) {
-        card.addEventListener('mousemove', e => {
-          const r = card.getBoundingClientRect();
-          const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-          card.style.transform = `rotateY(${(x - .5) * 18}deg) rotateX(${(.5 - y) * 18}deg) scale(1.03)`;
-          card.style.setProperty('--gx', x * 100 + '%'); card.style.setProperty('--gy', y * 100 + '%');
-        });
-        card.addEventListener('mouseleave', () => { card.style.transform = ''; });
-      }
-      card.addEventListener('click', () => openModal(card.dataset.place));
-    });
-    icons();
-  }
-
-  let lastFocus = null;
-  function openModal(id) {
-    const p = PLACES.find(x => x.id === id); if (!p) return;
-    lastFocus = document.activeElement;
-    $('#modalContent').innerHTML = `
-      <div class="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <div class="relative h-72 sm:h-96 md:h-auto md:min-h-[560px] overflow-hidden md:rounded-l-3xl">
-          <div class="absolute inset-0">${POSTERS[p.id]()}</div>
+          <p id="cdNote" class="mt-3 text-[13px] text-snow/45"></p>
         </div>
-        <div class="p-6 sm:p-9 min-w-0">
-          <div class="flex flex-wrap items-center gap-2 pr-12">
-            <span class="font-syne font-extrabold text-xs tracking-widest uppercase bg-gold text-night px-2.5 py-1 rounded-lg">${p.year}</span>
-            <span class="text-xs uppercase tracking-[.25em] text-pave font-bold">${p.short}</span>
-          </div>
-          <h3 id="modalTitle" class="font-cinzel font-bold text-3xl sm:text-4xl mt-3 leading-tight [text-wrap:balance]">${p.title}</h3>
-          <p class="text-lg text-snow/90 leading-relaxed mt-4">${p.lead}</p>
-          <h4 class="font-syne uppercase tracking-[.25em] text-xs text-gold mt-7 mb-2 flex items-center gap-2"><i data-lucide="scroll-text" class="w-4 h-4"></i>La storia</h4>
-          <p class="text-snow/70 leading-relaxed">${p.story}</p>
-          <div class="mt-7 rounded-2xl bg-night/60 border border-gold/20 p-5">
-            <h4 class="font-syne uppercase tracking-[.25em] text-xs text-gold mb-3 flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4"></i>Consigli da insider</h4>
-            <ul class="space-y-3 text-sm text-snow/80">${p.tips.map(t => `<li class="flex gap-2"><i data-lucide="sparkle" class="w-4 h-4 text-pave shrink-0 mt-0.5"></i><span>${t}</span></li>`).join('')}</ul>
-          </div>
-          <div class="mt-4 grid sm:grid-cols-3 gap-2">${p.info.map(([ic, t]) => `<div class="flex items-center gap-2.5 rounded-xl bg-white/5 px-3 py-3 text-sm"><i data-lucide="${ic}" class="w-4 h-4 text-gold shrink-0"></i><span class="min-w-0">${t}</span></div>`).join('')}</div>
-        </div>
-      </div>`;
-    $('#modal').classList.remove('hidden-modal');
-    document.body.style.overflow = 'hidden';
-    icons();
-    setTimeout(() => $('#modalClose').focus(), 50);
-  }
-  function closeModal() {
-    $('#modal').classList.add('hidden-modal');
-    document.body.style.overflow = '';
-    lastFocus && lastFocus.focus();
-  }
-  $('#modalClose').addEventListener('click', closeModal);
-  $('#modalBackdrop').addEventListener('click', closeModal);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').classList.contains('hidden-modal')) closeModal(); });
+      </div>
 
-  /* =====================================================================
-     QUIRKS — head gesture + phrases
-     ===================================================================== */
-  $$('.gesture-btn').forEach(b => b.addEventListener('click', () => {
-    const h = $('#head'); const g = b.dataset.gesture;
-    h.classList.remove('do-shake', 'do-nod'); void h.offsetWidth;
-    h.classList.add(g === 'shake' ? 'do-shake' : 'do-nod');
-    $('#headLabel').innerHTML = g === 'shake' ? '<span class="text-pave">ДА</span><br><span class="text-sm font-sans font-semibold">= Sì!</span>' : '<span class="text-pave">НЕ</span><br><span class="text-sm font-sans font-semibold">= No!</span>';
-  }));
-  $('#phrases').innerHTML = PHRASES.map(p => `
-    <button class="phrase group rounded-2xl border border-white/10 hover:border-gold p-4 text-left transition" data-say="${p.bg}">
-      <div class="font-cinzel font-bold text-xl text-gold">${p.bg}</div>
-      <div class="text-sm text-snow/80 mt-1">${p.tr}</div>
-      <div class="text-xs text-snow/40 mt-1 flex items-center gap-1">${p.it} <i data-lucide="volume-2" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition"></i></div>
+      <div class="min-w-0">
+        <div class="photo aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] rounded-sm" data-photo="hero"></div>
+        <div class="mt-5 flex items-start gap-5 border-t hair pt-5">
+          <i id="wxIcon" data-lucide="cloud-snow" class="w-7 h-7 text-snow/80 shrink-0"></i>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+              <p class="font-display text-3xl tnum"><span id="wxTemp">-1</span>°C</p>
+              <p id="wxDesc" class="text-[13px] text-snow/55">Fine dicembre: max +3°, min -4°, sul Vitosha -8°</p>
+            </div>
+            <p class="mt-2 text-[12px] text-snow/40"><span id="wxLive">Medie stagionali</span> · Alba 07:58 · Tramonto 16:58</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ITINERARIO -->
+  <section id="itinerario" class="border-t hair py-20 md:py-28">
+    <div class="wrap">
+      <div class="grid gap-6 md:grid-cols-2 md:items-end">
+        <div>
+          <p class="eyebrow">Itinerario</p>
+          <h2 class="mt-4 font-display text-4xl md:text-5xl leading-tight">Tre giorni a Sofia</h2>
+        </div>
+        <p class="text-[15px] leading-relaxed text-snow/60 md:max-w-md md:justify-self-end">A fine dicembre c'è luce dalle 8 alle 17. Le tappe all'aperto sono nelle ore centrali, le serate al caldo.</p>
+      </div>
+      <div role="tablist" aria-label="Giorni del viaggio" id="dayTabs" class="mt-12 grid grid-cols-3 border-b hair"></div>
+      <div id="dayPanel" class="mt-10"></div>
+    </div>
+  </section>
+
+  <!-- LUOGHI -->
+  <section id="luoghi" class="border-t hair bg-night-deep py-20 md:py-28">
+    <div class="wrap">
+      <div class="grid gap-6 md:grid-cols-2 md:items-end">
+        <div>
+          <p class="eyebrow">The best of Sofia</p>
+          <h2 class="mt-4 font-display text-4xl md:text-5xl leading-tight">Quattro luoghi da non perdere</h2>
+        </div>
+        <p class="text-[15px] leading-relaxed text-snow/60 md:max-w-md md:justify-self-end">Tocca una scheda per leggere la storia del luogo e i consigli pratici.</p>
+      </div>
+      <div id="placesGrid" class="mt-12 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4"></div>
+    </div>
+  </section>
+
+  <!-- CULTURA -->
+  <section id="cultura" class="border-t hair py-20 md:py-28">
+    <div class="wrap">
+      <p class="eyebrow">Sofia's quirks</p>
+      <h2 class="mt-4 font-display text-4xl md:text-5xl leading-tight">Tre cose che succedono solo qui</h2>
+
+      <div class="mt-14 grid gap-12 lg:grid-cols-3 lg:gap-10">
+        <article class="reveal min-w-0">
+          <div class="photo aspect-[3/2] rounded-sm" data-photo="klek"></div>
+          <p class="mt-6 text-[11px] uppercase tracking-[.25em] text-snow/40">клек · "accovacciati"</p>
+          <h3 class="mt-2 font-display text-2xl">Klek shops</h3>
+          <p class="mt-3 text-[15px] leading-relaxed text-snow/65">Negozietti ricavati nelle finestre dei seminterrati, nati negli anni '90. Per comprare un caffè o uno snack ci si deve piegare fino al marciapiede. Li trovate soprattutto a Oborishte e Lozenets.</p>
+        </article>
+
+        <article class="reveal min-w-0">
+          <div class="aspect-[3/2] rounded-sm bg-night-raised flex items-center justify-center gap-8">
+            <svg id="head" viewBox="0 0 100 110" class="w-20 h-20" aria-hidden="true">
+              <ellipse cx="50" cy="50" rx="32" ry="36" fill="none" stroke="#F8FAFC" stroke-width="2.5"/>
+              <circle cx="39" cy="48" r="3" fill="#F8FAFC"/><circle cx="61" cy="48" r="3" fill="#F8FAFC"/>
+              <path d="M40 66 Q50 72 60 66" stroke="#D4AF37" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M44 86 V104 M56 86 V104" stroke="#F8FAFC" stroke-width="2.5"/>
+            </svg>
+            <div class="flex flex-col gap-2 text-[13px]">
+              <button data-g="shake" class="gest h-9 px-4 rounded-full border hair hover:border-gold transition">Scuoti la testa</button>
+              <button data-g="nod" class="gest h-9 px-4 rounded-full border hair hover:border-gold transition">Annuisci</button>
+              <p id="gestOut" class="h-5 text-center font-display text-gold" aria-live="polite"></p>
+            </div>
+          </div>
+          <p class="mt-6 text-[11px] uppercase tracking-[.25em] text-snow/40">Да = sì · Не = no</p>
+          <h3 class="mt-2 font-display text-2xl">Sì e no al contrario</h3>
+          <p class="mt-3 text-[15px] leading-relaxed text-snow/65">In Bulgaria scuotere la testa vuol dire "sì" e annuire vuol dire "no". Chi lavora con i turisti spesso si adatta, quindi nel dubbio rispondete a voce.</p>
+        </article>
+
+        <article class="reveal min-w-0">
+          <div class="photo aspect-[3/2] rounded-sm" data-photo="springs"></div>
+          <p class="mt-6 text-[11px] uppercase tracking-[.25em] text-snow/40">Acqua minerale a circa 46 °C</p>
+          <h3 class="mt-2 font-display text-2xl">Fontane termali in centro</h3>
+          <p class="mt-3 text-[15px] leading-relaxed text-snow/65">Dietro l'ex Bagno Minerale Centrale, vicino alla moschea Banya Bashi, ci sono rubinetti pubblici di acqua termale calda. I sofioti ci riempiono le bottiglie anche a dicembre. È gratis.</p>
+        </article>
+      </div>
+
+      <div id="phrases" class="mt-16 grid grid-cols-2 md:grid-cols-4 border-t hair"></div>
+    </div>
+  </section>
+
+  <!-- CREW -->
+  <section id="crew" class="border-t hair bg-night-deep py-20 md:py-28">
+    <div class="wrap">
+      <div class="grid gap-6 md:grid-cols-2 md:items-end">
+        <div>
+          <p class="eyebrow">La crew</p>
+          <h2 class="mt-4 font-display text-4xl md:text-5xl leading-tight">Things to do together</h2>
+        </div>
+        <p class="text-[15px] leading-relaxed text-snow/60 md:max-w-md md:justify-self-end">Scegli il tuo nome, poi spunta le missioni completate. La lista resta salvata su questo dispositivo.</p>
+      </div>
+
+      <div id="crewRow" class="mt-12 grid grid-cols-2 md:grid-cols-4 border-y hair"></div>
+
+      <div class="mt-10 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex-1 min-w-[220px]">
+          <div class="flex items-baseline justify-between text-[13px]">
+            <span class="text-snow/55" id="progMsg">Pronti a partire</span>
+            <span class="font-display text-xl tnum" id="progNum">0 / 0</span>
+          </div>
+          <div class="mt-2 h-px bg-white/10"><div id="progBar" class="h-px bg-gold transition-all duration-700" style="width:0"></div></div>
+        </div>
+        <div class="flex gap-2 text-[13px]">
+          <button id="filterBtn" class="h-9 px-4 rounded-full border hair hover:border-gold transition">Solo da fare</button>
+          <button id="resetBtn" class="h-9 px-4 rounded-full border hair hover:border-terra transition">Azzera</button>
+        </div>
+      </div>
+
+      <ul id="checklist" class="mt-8 grid md:grid-cols-2 md:gap-x-10"></ul>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section id="info" class="border-t hair py-20 md:py-28">
+    <div class="wrap">
+      <p class="eyebrow">Smart travel guide</p>
+      <h2 class="mt-4 font-display text-4xl md:text-5xl leading-tight">Informazioni pratiche</h2>
+
+      <div class="mt-14 grid gap-14 lg:grid-cols-3 lg:gap-10">
+        <article class="reveal min-w-0">
+          <div class="flex items-center gap-3"><i data-lucide="euro" class="w-5 h-5 text-gold"></i><h3 class="font-display text-2xl">Valuta</h3></div>
+          <p class="mt-4 text-[15px] leading-relaxed text-snow/65">Dal <span class="text-snow">1° gennaio 2026 in Bulgaria si paga in euro</span>: niente cambio. Il lev non è più accettato, ma può comparire su vecchi listini.</p>
+          <div class="mt-6 border-y hair py-5">
+            <p class="text-[11px] uppercase tracking-[.2em] text-snow/40">Convertitore · 1 € = 1,95583 лв</p>
+            <div class="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+              <label class="flex items-baseline gap-2 border-b hair pb-1 focus-within:border-gold min-w-0"><span class="text-gold">€</span><input id="eur" type="number" inputmode="decimal" min="0" step="0.01" value="10" class="w-full min-w-0 bg-transparent outline-none font-display text-2xl tnum" aria-label="Importo in euro" /></label>
+              <button id="swapBtn" class="text-snow/50 hover:text-gold transition" aria-label="Inverti"><i data-lucide="arrow-left-right" class="w-4 h-4"></i></button>
+              <label class="flex items-baseline gap-2 border-b hair pb-1 focus-within:border-gold min-w-0"><span class="text-gold">лв</span><input id="bgn" type="number" inputmode="decimal" min="0" step="0.01" class="w-full min-w-0 bg-transparent outline-none font-display text-2xl tnum" aria-label="Importo in lev" /></label>
+            </div>
+          </div>
+          <ul class="mt-5 space-y-3 text-[14px] text-snow/65">
+            <li class="flex gap-3"><i data-lucide="credit-card" class="w-4 h-4 mt-0.5 text-snow/40 shrink-0"></i>Carta contactless accettata quasi ovunque, anche ai tornelli della metro.</li>
+            <li class="flex gap-3"><i data-lucide="landmark" class="w-4 h-4 mt-0.5 text-snow/40 shrink-0"></i>Prelevate dagli ATM delle banche e rifiutate la "conversione dinamica".</li>
+            <li class="flex gap-3"><i data-lucide="hand-coins" class="w-4 h-4 mt-0.5 text-snow/40 shrink-0"></i>Al ristorante la mancia abituale è circa il 10%.</li>
+          </ul>
+        </article>
+
+        <article class="reveal min-w-0">
+          <div class="flex items-center gap-3"><i data-lucide="train-front" class="w-5 h-5 text-gold"></i><h3 class="font-display text-2xl">Dall'aeroporto</h3></div>
+          <ol class="mt-6 relative border-l hair ml-1.5 space-y-5">
+            <li class="pl-6 relative"><span class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-pave"></span><p class="text-[14px]"><span class="text-snow">Terminal 2</span> <span class="text-snow/45">· Летище София</span></p><p class="text-[13px] text-snow/50">Metro linea M4, direzione centro</p></li>
+            <li class="pl-6 relative"><span class="absolute -left-[4px] top-1.5 w-2 h-2 rounded-full border border-snow/40 bg-night"></span><p class="text-[13px] text-snow/50">Mladost · Sofia University · circa 20 minuti</p></li>
+            <li class="pl-6 relative"><span class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gold"></span><p class="text-[14px] text-snow">Serdika</p><p class="text-[13px] text-snow/50">Centro città · cambio per M2 e M3</p></li>
+          </ol>
+          <dl class="mt-7 divide-y divide-white/10 border-y hair text-[14px]">
+            <div class="grid grid-cols-[100px_1fr] gap-3 py-3"><dt class="text-snow/45">Terminal 1</dt><dd class="text-snow/75">Navetta gratuita per il T2, oppure bus 84</dd></div>
+            <div class="grid grid-cols-[100px_1fr] gap-3 py-3"><dt class="text-snow/45">Biglietto</dt><dd class="text-snow/75">Circa 0,80 €, contactless al tornello</dd></div>
+            <div class="grid grid-cols-[100px_1fr] gap-3 py-3"><dt class="text-snow/45">Taxi</dt><dd class="text-snow/75">Solo dal desk ufficiale OK Supertrans, 10–15 € fino al centro</dd></div>
+            <div class="grid grid-cols-[100px_1fr] gap-3 py-3"><dt class="text-snow/45">Vitosha</dt><dd class="text-snow/75">Bus 66 da Hladilnika ad Aleko (circa 1 ora) o taxi</dd></div>
+          </dl>
+        </article>
+
+        <article class="reveal min-w-0">
+          <div class="flex items-center gap-3"><i data-lucide="luggage" class="w-5 h-5 text-gold"></i><h3 class="font-display text-2xl">In valigia</h3></div>
+          <p class="mt-4 text-[15px] leading-relaxed text-snow/65">Da -8° in montagna a +3° in città: vestitevi a strati.</p>
+          <ul id="packing" class="mt-5 border-t hair"></ul>
+        </article>
+      </div>
+
+      <dl class="mt-16 grid grid-cols-2 md:grid-cols-4 border-t hair">
+        <div class="py-5 pr-4"><dt class="text-[11px] uppercase tracking-[.2em] text-snow/40">Fuso orario</dt><dd class="mt-1 text-[15px]">+1 ora rispetto all'Italia</dd></div>
+        <div class="py-5 pr-4"><dt class="text-[11px] uppercase tracking-[.2em] text-snow/40">Documenti</dt><dd class="mt-1 text-[15px]">Carta d'identità valida per l'espatrio</dd></div>
+        <div class="py-5 pr-4"><dt class="text-[11px] uppercase tracking-[.2em] text-snow/40">Emergenze</dt><dd class="mt-1 text-[15px]">112</dd></div>
+        <div class="py-5 pr-4"><dt class="text-[11px] uppercase tracking-[.2em] text-snow/40">Prese elettriche</dt><dd class="mt-1 text-[15px]">Tipo C/F, come in Italia</dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t hair">
+  <div class="wrap py-12 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+    <div>
+      <p class="font-display text-3xl tracking-[.1em]">СОФИЯ</p>
+      <p class="mt-2 text-[13px] text-snow/45">Riccardo · Filippo · Andrea · Martina — 27–29 dicembre</p>
+    </div>
+    <div class="text-[12px] text-snow/35 md:text-right space-y-1">
+      <p>Orari e prezzi possono cambiare: verificateli prima di partire.</p>
+      <p id="credits"></p>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div id="modal" class="off fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-8" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div id="mBack" class="absolute inset-0 bg-night-deep/85 backdrop-blur-sm"></div>
+  <div class="sheet relative w-full md:max-w-5xl max-h-[92svh] overflow-y-auto bg-night border hair rounded-t-xl md:rounded-sm">
+    <button id="mClose" class="absolute top-4 right-4 z-10 grid place-items-center w-10 h-10 rounded-full bg-night/80 border hair hover:border-gold transition" aria-label="Chiudi"><i data-lucide="x" class="w-4 h-4"></i></button>
+    <div id="mBody"></div>
+  </div>
+</div>
+
+<div id="toast" class="fixed left-1/2 bottom-6 z-[60] -translate-x-1/2 translate-y-3 opacity-0 pointer-events-none transition-all duration-300 rounded-full bg-snow text-night text-[13px] font-medium px-5 py-2.5" role="status"></div>
+
+<script>
+/* ======================================================================
+   FOTO: inserisci qui le foto vere (percorso o URL) e i crediti.
+   Se src è vuoto, al suo posto compare una lastra tipografica sobria.
+   ====================================================================== */
+const PHOTOS = {
+  hero:    { src: '', alt: 'Sofia in inverno', cyr: 'София', credit: '' },
+  nevsky:  { src: '', alt: 'Cattedrale Aleksandr Nevskij', cyr: 'Александър Невски', credit: '' },
+  vitosha: { src: '', alt: 'Il Monte Vitosha innevato', cyr: 'Витоша', credit: '' },
+  serdica: { src: '', alt: 'Rovine romane di Serdica', cyr: 'Сердика', credit: '' },
+  vazov:   { src: '', alt: 'Teatro Nazionale Ivan Vazov', cyr: 'Народен театър', credit: '' },
+  klek:    { src: '', alt: 'Un klek shop in un seminterrato', cyr: 'Клек', credit: '' },
+  springs: { src: '', alt: 'Fontana di acqua minerale calda', cyr: 'Минерална вода', credit: '' }
+};
+
+const TRAVELERS = [
+  { id: 'RM', name: 'Riccardo', surname: 'Martino' },
+  { id: 'FR', name: 'Filippo', surname: 'Rizzo' },
+  { id: 'AP', name: 'Andrea', surname: 'Podo' },
+  { id: 'MT', name: 'Martina', surname: 'Tamborrella' }
+];
+
+const DAYS = [
+  { label: 'Giorno 1', date: 'Domenica 27 dicembre', short: '27 dic', title: 'Arrivo e Vitosha Boulevard',
+    intro: 'Atterraggio, check-in e prima passeggiata in centro tra luci di Natale e una cena con musica tradizionale.',
+    steps: [
+      ['12:00', 'Arrivo all’aeroporto', 'Metro M4 dal Terminal 2 fino a Serdika, circa 20 minuti. Check-in e valigie in camera.'],
+      ['13:30', 'Pranzo veloce', 'Banitsa calda al formaggio o kebapche alla griglia.'],
+      ['15:00', 'Vitosha Boulevard', 'La via pedonale principale, con il monte Vitosha sullo sfondo. Si arriva fino al parco del Palazzo della Cultura (NDK).'],
+      ['16:58', 'Tramonto al NDK', 'La luce migliore per la prima foto di gruppo. Poi si accendono le luci natalizie.'],
+      ['17:30', 'Mercatino di Natale', 'Nel Giardino della Città, davanti al Teatro Ivan Vazov, se è ancora aperto: vin brulé (greyano vino) e dolci. In alternativa, le luci di piazza Nevskij.'],
+      ['20:00', 'Cena tipica', 'Hadjidraganov’s Houses, con musica folk dal vivo, o Shtastlivetsa su Vitosha Blvd. Shopska salad, kavarma, rakia. Meglio prenotare.']
+    ] },
+  { label: 'Giorno 2', date: 'Lunedì 28 dicembre', short: '28 dic', title: 'Storia e neve',
+    intro: 'Duemila anni di storia in pochi isolati, dalla Serdica romana alle cupole d’oro. Nel pomeriggio la neve del Monte Vitosha.',
+    steps: [
+      ['08:45', 'Colazione', 'Banitsa con boza, la bevanda fermentata tipica della colazione bulgara.'],
+      ['09:30', 'Cattedrale Aleksandr Nevskij', 'Al mattino presto l’interno è quasi vuoto. Accanto c’è la basilica di Santa Sofia, che dà il nome alla città.'],
+      ['11:00', 'Rotonda di San Giorgio', 'L’edificio più antico di Sofia (IV secolo), in un cortile tra i palazzi del governo. Vicino, il cambio della guardia alla Presidenza.'],
+      ['11:45', 'Antica Serdica', 'Strade e terme romane all’aperto nella stazione Serdika e nel Largo. Ingresso libero.'],
+      ['13:00', 'Pranzo', 'Una zuppa calda: bob chorba (fagioli) o, per i più coraggiosi, shkembe chorba (trippa).'],
+      ['14:00', 'Monte Vitosha', 'Taxi o bus 66 fino ad Aleko, circa 1.800 m: neve, vista sulla città e cioccolata calda. Rientro prima del buio.'],
+      ['20:30', 'Cena e brindisi', 'Si brinda con "Наздраве!" (nazdrave), guardandosi negli occhi.']
+    ] },
+  { label: 'Giorno 3', date: 'Martedì 29 dicembre', short: '29 dic', title: 'Sofia segreta',
+    intro: 'La città fuori dalle cartoline: negozi al livello del marciapiede, acqua calda in strada, mercati e una serata a teatro.',
+    steps: [
+      ['10:00', 'Klek shops', 'Passeggiata tra Oborishte e il Doctor’s Garden alla ricerca dei negozi nei seminterrati.'],
+      ['11:15', 'Fontane termali', 'I rubinetti di acqua calda dietro l’ex Bagno Minerale Centrale. A due passi la moschea Banya Bashi e la Sinagoga.'],
+      ['12:15', 'Mercati', 'Il mercato coperto Halite e lo Zhenski Pazar per spezie, miele e frutta secca.'],
+      ['13:30', 'Pranzo', 'Mekitsi, frittelle servite con yogurt e marmellata.'],
+      ['15:00', 'Souvenir', 'Il mercatino d’antiquariato vicino alla Nevskij e i prodotti all’olio di rosa bulgaro.'],
+      ['17:00', 'Teatro Ivan Vazov', 'La facciata illuminata e, se il programma lo permette, uno spettacolo.'],
+      ['20:00', 'Cena d’addio', 'Ultimo brindisi della spedizione e ultime missioni della checklist.']
+    ] }
+];
+
+const PLACES = [
+  { id: 'nevsky', title: 'Cattedrale Aleksandr Nevskij', meta: '1882–1912 · Piazza Aleksandar Nevski',
+    lead: 'Il simbolo di Sofia: una delle più grandi cattedrali ortodosse dei Balcani, con la cupola principale rivestita d’oro.',
+    story: 'Costruita in stile neo-bizantino in memoria dei soldati russi caduti nella guerra che nel 1877–78 liberò la Bulgaria dal dominio ottomano. All’interno marmi italiani, mosaici e un’acustica straordinaria. Nella cripta c’è la più ricca collezione di icone ortodosse del paese.',
+    tips: ['Andate la mattina presto o durante una funzione: i canti valgono la visita.', 'L’ingresso è gratuito; la cripta con le icone è a pagamento.', 'Di sera, illuminata e con la neve, è la foto del viaggio.'] },
+  { id: 'vitosha', title: 'Monte Vitosha', meta: '2.290 m · 30–60 minuti dal centro',
+    lead: 'La montagna di casa dei sofioti, parco naturale dal 1934, il più antico dei Balcani.',
+    story: 'La cima, Cherni Vrah, arriva a 2.290 metri. In inverno la zona di Aleko diventa una piccola stazione sciistica, ma è perfetta anche solo per camminare sulla neve. I "Ponti d’oro" (Zlatnite Mostove) sono un fiume di massi giganti formato durante l’era glaciale.',
+    tips: ['Servono scarpe impermeabili e antiscivolo.', 'In quota fa 6–10 gradi in meno che in città.', 'Partite entro le 14: alle 17 è buio.'] },
+  { id: 'serdica', title: 'Antica Serdica', meta: 'II–VI secolo · Metro Serdika',
+    lead: 'Sotto il centro c’è Serdica, la città romana da cui è nata Sofia. Costantino la chiamava "la mia Roma".',
+    story: 'Gli scavi per la metropolitana hanno riportato alla luce strade lastricate, terme, edifici e una basilica paleocristiana. Il complesso archeologico si visita all’aperto e gratuitamente, tra le banchine della metro e la piazza.',
+    tips: ['Abbinatela alla Rotonda di San Giorgio, a pochi passi.', 'Guardate anche la chiesa semi-interrata di Sveta Petka.', 'È in parte coperta: buona tappa quando fa molto freddo.'] },
+  { id: 'vazov', title: 'Teatro Nazionale Ivan Vazov', meta: '1906 · Giardino della Città',
+    lead: 'Il teatro più importante della Bulgaria, con la facciata neoclassica rossa e bianca.',
+    story: 'Progettato dagli architetti viennesi Fellner & Helmer e intitolato a Ivan Vazov, il più grande scrittore bulgaro. Davanti c’è il Giardino della Città con la fontana, che durante le feste ospita il mercatino di Natale.',
+    tips: ['Controllate il programma: a fine dicembre ci sono spettacoli speciali.', 'Anche senza biglietto, la facciata illuminata merita una sosta.', 'Il giardino di fronte è il punto d’incontro preferito dei sofioti.'] }
+];
+
+const PHRASES = [
+  ['Здравейте', 'zdraveyte', 'Salve'],
+  ['Благодаря', 'blagodarya', 'Grazie'],
+  ['Наздраве!', 'nazdrave', 'Salute!'],
+  ['Сметката, моля', 'smetkata, molya', 'Il conto, per favore']
+];
+
+const CHECKLIST = [
+  ['c1', 'Foto di gruppo davanti alla cattedrale Nevskij'],
+  ['c2', 'Rotonda di San Giorgio e cambio della guardia'],
+  ['c3', 'Trovare le rovine romane nella metro Serdika'],
+  ['c4', 'Foto al Teatro Ivan Vazov illuminato'],
+  ['c5', 'Colazione con banitsa e boza'],
+  ['c6', 'Una vera shopska salad'],
+  ['c7', 'Brindisi con rakia, guardandosi negli occhi'],
+  ['c8', 'Vin brulé al mercatino di Natale'],
+  ['c9', 'Toccare la neve sul Monte Vitosha'],
+  ['c10', 'Percorrere tutto Vitosha Boulevard'],
+  ['c11', 'Comprare qualcosa in un klek shop'],
+  ['c12', 'Riempire una bottiglia alle fontane termali'],
+  ['c13', 'Dire "sì" scuotendo la testa'],
+  ['c14', 'Leggere un’insegna in cirillico'],
+  ['c15', 'Un prodotto all’olio di rosa'],
+  ['c16', 'Foto finale della crew all’ultima cena']
+];
+
+const PACKING = [
+  ['p1', 'Piumino o giacca imbottita antivento'],
+  ['p2', 'Maglia e leggings termici'],
+  ['p3', 'Berretto, guanti touch e sciarpa'],
+  ['p4', 'Scarponcini impermeabili antiscivolo'],
+  ['p5', 'Calze di lana'],
+  ['p6', 'Power bank: il freddo scarica le batterie'],
+  ['p7', 'Burrocacao e crema mani'],
+  ['p8', 'Carta d’identità e tessera sanitaria'],
+  ['p9', 'Borraccia termica']
+];
+
+const SHARE_URL = 'https://claude.ai/artifact/Cd3VMc1xaedWckTSKibuMs';
+
+/* ====================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const icons = () => window.lucide && lucide.createIcons();
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('sofia26:' + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('sofia26:' + k, JSON.stringify(v)); } catch {} }
+};
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg;
+  t.style.opacity = '1'; t.style.transform = 'translate(-50%,0)';
+  clearTimeout(toast.t); toast.t = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%,12px)'; }, 2200);
+}
+
+/* Photos */
+function photoHTML(key) {
+  const p = PHOTOS[key];
+  const plate = `<div class="plate"><span class="cyr">${p.cyr}</span><span class="rule"></span></div>`;
+  if (!p.src) return plate;
+  return `${plate}<img src="${p.src}" alt="${p.alt}" loading="lazy" onerror="this.remove()">${p.credit ? `<span class="credit">${p.credit}</span>` : ''}`;
+}
+function fillPhotos(root = document) { $$('[data-photo]', root).forEach(el => { el.innerHTML = photoHTML(el.dataset.photo); }); }
+function renderCredits() {
+  const c = Object.values(PHOTOS).filter(p => p.src && p.credit).map(p => p.credit);
+  $('#credits').textContent = c.length ? 'Foto: ' + [...new Set(c)].join(' · ') : '';
+}
+
+/* Countdown */
+(function () {
+  const now = new Date(); let y = now.getFullYear();
+  let start = new Date(`${y}-12-27T00:00:00+02:00`), end = new Date(`${y}-12-30T00:00:00+02:00`);
+  if (now >= end) { y++; start = new Date(`${y}-12-27T00:00:00+02:00`); end = new Date(`${y}-12-30T00:00:00+02:00`); }
+  const set = (k, v) => { $(`[data-cd="${k}"]`).textContent = String(v).padStart(2, '0'); };
+  function tick() {
+    const n = new Date(); const during = n >= start && n < end;
+    const ms = Math.max(0, (during ? end : start) - n);
+    set('d', Math.floor(ms / 864e5)); set('h', Math.floor(ms / 36e5) % 24); set('m', Math.floor(ms / 6e4) % 60); set('s', Math.floor(ms / 1e3) % 60);
+    if (during) {
+      $('#cdLabel').textContent = `Siamo a Sofia · giorno ${Math.floor((n - start) / 864e5) + 1} · tempo rimasto`;
+      $('#cdNote').textContent = '';
+    } else {
+      const d = Math.floor(ms / 864e5);
+      $('#cdNote').textContent = d > 30 ? `Partenza domenica 27 dicembre ${y}.` : d > 7 ? 'Controllate documenti e abbigliamento termico.' : 'Ultimi giorni: valigia pronta.';
+    }
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* Weather: live when the network allows it, seasonal averages otherwise */
+(async function () {
+  const codes = { 0: ['Sereno', 'sun'], 1: ['Poco nuvoloso', 'cloud-sun'], 2: ['Parzialmente nuvoloso', 'cloud-sun'], 3: ['Coperto', 'cloud'], 45: ['Nebbia', 'cloud-fog'], 48: ['Nebbia', 'cloud-fog'], 51: ['Pioviggine', 'cloud-drizzle'], 53: ['Pioviggine', 'cloud-drizzle'], 55: ['Pioviggine', 'cloud-drizzle'], 61: ['Pioggia', 'cloud-rain'], 63: ['Pioggia', 'cloud-rain'], 65: ['Pioggia forte', 'cloud-rain'], 66: ['Pioggia gelata', 'cloud-hail'], 67: ['Pioggia gelata', 'cloud-hail'], 71: ['Neve debole', 'cloud-snow'], 73: ['Neve', 'cloud-snow'], 75: ['Neve forte', 'snowflake'], 77: ['Neve', 'snowflake'], 80: ['Rovesci', 'cloud-rain'], 81: ['Rovesci', 'cloud-rain'], 82: ['Rovesci', 'cloud-rain'], 85: ['Rovesci di neve', 'cloud-snow'], 86: ['Rovesci di neve', 'cloud-snow'], 95: ['Temporale', 'cloud-lightning'], 96: ['Temporale', 'cloud-lightning'], 99: ['Temporale', 'cloud-lightning'] };
+  try {
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.6977&longitude=23.3219&current=temperature_2m,weather_code,wind_speed_10m&timezone=Europe%2FSofia');
+    if (!r.ok) throw 0;
+    const c = (await r.json()).current; const [d, ic] = codes[c.weather_code] || ['Variabile', 'cloud'];
+    $('#wxTemp').textContent = Math.round(c.temperature_2m);
+    $('#wxDesc').textContent = `Ora a Sofia: ${d.toLowerCase()}, vento ${Math.round(c.wind_speed_10m)} km/h`;
+    $('#wxLive').textContent = 'Dato in tempo reale';
+    const old = $('#wxIcon'); const ni = document.createElement('i'); ni.id = 'wxIcon'; ni.setAttribute('data-lucide', ic); ni.setAttribute('class', 'w-7 h-7 text-snow/80 shrink-0'); old.replaceWith(ni); icons();
+  } catch {}
+})();
+
+/* Itinerary */
+let day = store.get('day', 0);
+function renderDays() {
+  $('#dayTabs').innerHTML = DAYS.map((d, i) => `
+    <button role="tab" aria-selected="${i === day}" data-i="${i}" class="tab -mb-px border-b-2 border-transparent pb-4 text-left text-snow/45 hover:text-snow/80 transition">
+      <span class="block text-[11px] uppercase tracking-[.25em]">${d.label}</span>
+      <span class="block mt-1 font-display text-lg sm:text-xl">${d.short}</span>
     </button>`).join('');
-  $$('.phrase').forEach(b => b.addEventListener('click', () => {
-    try {
-      const u = new SpeechSynthesisUtterance(b.dataset.say); u.lang = 'bg-BG'; u.rate = .85;
-      speechSynthesis.cancel(); speechSynthesis.speak(u);
-    } catch {}
-  }));
+  $$('#dayTabs .tab').forEach(b => b.onclick = () => { day = +b.dataset.i; store.set('day', day); renderDays(); });
+  const d = DAYS[day];
+  $('#dayPanel').innerHTML = `
+    <div class="grid gap-10 lg:grid-cols-[320px_1fr]">
+      <div>
+        <p class="text-[11px] uppercase tracking-[.25em] text-snow/40">${d.date}</p>
+        <h3 class="mt-2 font-display text-3xl">${d.title}</h3>
+        <p class="mt-4 text-[15px] leading-relaxed text-snow/60">${d.intro}</p>
+      </div>
+      <ol class="border-t hair min-w-0">
+        ${d.steps.map(([t, h, p]) => `
+          <li class="grid grid-cols-[64px_1fr] sm:grid-cols-[96px_1fr] gap-4 py-5 border-b hair">
+            <span class="font-display text-lg text-gold tnum">${t}</span>
+            <div class="min-w-0"><p class="text-[16px] font-medium">${h}</p><p class="mt-1 text-[14px] leading-relaxed text-snow/55">${p}</p></div>
+          </li>`).join('')}
+      </ol>
+    </div>`;
+}
 
-  /* =====================================================================
-     CREW + CHECKLIST
-     ===================================================================== */
-  let state = store.get('checks', {});       // { id: { by: 'RM', at: ts } }
-  let roles = store.get('roles', { RM: 0, FR: 1, AP: 2, MT: 3 });
-  let active = store.get('active', 'AP');
-  let onlyTodo = false;
-  let activeCat = 'Tutte';
-
-  function renderCrew() {
-    $('#crewGrid').innerHTML = TRAVELERS.map((t, i) => {
-      const count = Object.values(state).filter(s => s.by === t.id).length;
-      const role = ROLES[roles[t.id] % ROLES.length];
-      const on = active === t.id;
-      return `
-      <div class="reveal in relative rounded-3xl p-5 border transition-all duration-300 ${on ? 'border-gold bg-night-700 shadow-gold -translate-y-1' : 'border-white/10 bg-night-800 hover:border-gold/40'}">
-        ${on ? '<span class="absolute top-3 right-3 text-[10px] font-bold uppercase tracking-widest bg-gold text-night px-2 py-0.5 rounded-md">Attivo</span>' : ''}
-        <button class="pick-traveler w-full text-left" data-t="${t.id}" aria-pressed="${on}">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${t.grad} grid place-items-center font-syne font-extrabold text-2xl sm:text-3xl text-night shadow-lg">${t.id}</div>
-          <h3 class="mt-4 font-cinzel font-bold text-xl sm:text-2xl leading-tight">${t.name}</h3>
-          <p class="text-sm text-snow/50">${t.surname}</p>
-        </button>
-        <button class="cycle-role mt-3 inline-flex items-center gap-1.5 rounded-lg bg-white/5 hover:bg-gold/15 px-2.5 py-1.5 text-xs font-semibold transition" data-t="${t.id}" title="Cambia ruolo">
-          <i data-lucide="${role.icon}" class="w-3.5 h-3.5 text-gold"></i>${role.label}
-        </button>
-        <div class="mt-4 flex items-center justify-between text-xs text-snow/60">
-          <span>Missioni</span><span class="font-syne font-extrabold text-lg text-gold">${count}</span>
-        </div>
-        <div class="mt-1 h-1.5 rounded-full bg-white/5 overflow-hidden"><div class="h-full bg-gradient-to-r ${t.grad}" style="width:${Math.min(100, count / CHECKLIST.length * 100 * 2)}%"></div></div>
-      </div>`;
-    }).join('');
-    $$('.pick-traveler').forEach(b => b.addEventListener('click', () => {
-      active = b.dataset.t; store.set('active', active); renderCrew(); updateProgress();
-      const t = TRAVELERS.find(x => x.id === active); toast(`Ciao ${t.name}! Ora spunti tu le missioni`);
-    }));
-    $$('.cycle-role').forEach(b => b.addEventListener('click', () => {
-      roles[b.dataset.t] = (roles[b.dataset.t] + 1) % ROLES.length; store.set('roles', roles); renderCrew();
-    }));
-    icons();
-  }
-
-  function renderCatTabs() {
-    const cats = ['Tutte', ...new Set(CHECKLIST.map(c => c.cat))];
-    $('#checkTabs').innerHTML = cats.map(c => `
-      <button class="cat-tab rounded-full px-4 py-2 text-sm font-semibold border transition ${c === activeCat ? 'bg-gold text-night border-gold' : 'border-white/15 hover:border-gold/60'}" data-cat="${c}">${c}</button>`).join('');
-    $$('.cat-tab').forEach(b => b.addEventListener('click', () => { activeCat = b.dataset.cat; renderCatTabs(); renderChecklist(); }));
-  }
-
-  function renderChecklist() {
-    const items = CHECKLIST.filter(c => (activeCat === 'Tutte' || c.cat === activeCat) && (!onlyTodo || !state[c.id]));
-    $('#checklist').innerHTML = items.length ? items.map(c => {
-      const s = state[c.id]; const t = s && TRAVELERS.find(x => x.id === s.by);
-      return `
-      <li>
-        <label class="check-item group flex items-start gap-4 rounded-2xl border ${s ? 'border-gold/30 bg-gold/[.06]' : 'border-white/10 bg-night-800'} hover:border-gold/60 p-4 cursor-pointer transition">
-          <input type="checkbox" class="sr-only" data-id="${c.id}" ${s ? 'checked' : ''} />
-          <span class="box mt-0.5 grid place-items-center w-6 h-6 shrink-0 rounded-lg border-2 border-gold/60 transition">
-            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="#0F172A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
-          </span>
-          <span class="label flex-1 text-sm sm:text-base transition">${c.text}
-            <span class="flex items-center gap-2 mt-1.5 text-[11px] uppercase tracking-widest text-snow/40 no-underline" style="text-decoration:none">
-              <i data-lucide="${c.icon}" class="w-3.5 h-3.5 text-gold/70"></i>${c.cat}
-              ${t ? `<span class="ml-auto normal-case tracking-normal text-[11px] px-2 py-0.5 rounded-md bg-gradient-to-r ${t.grad} text-night font-bold">✓ ${t.name}</span>` : ''}
-            </span>
-          </span>
-        </label>
-      </li>`;
-    }).join('') : `<li class="md:col-span-2 rounded-2xl border border-dashed border-gold/40 p-10 text-center text-snow/60"><i data-lucide="trophy" class="w-10 h-10 mx-auto text-gold mb-3"></i>Niente da fare qui: missioni completate!</li>`;
-
-    $$('#checklist input').forEach(inp => inp.addEventListener('change', () => {
-      const id = inp.dataset.id;
-      if (inp.checked) { state[id] = { by: active, at: Date.now() }; burst(inp.closest('label')); }
-      else delete state[id];
-      store.set('checks', state);
-      renderChecklist(); renderCrew(); updateProgress();
-    }));
-    icons();
-  }
-
-  let lastPct = -1;
-  function updateProgress() {
-    const done = Object.keys(state).filter(k => CHECKLIST.some(c => c.id === k)).length;
-    const total = CHECKLIST.length; const pct = Math.round(done / total * 100);
-    $('#ring').style.strokeDashoffset = 326.7 * (1 - done / total);
-    $('#pct').textContent = pct + '%'; $('#pctCount').textContent = `${done} / ${total}`;
-    $('#pctMsg').textContent = pct === 0 ? 'Il viaggio deve ancora cominciare…'
-      : pct < 30 ? 'Bel riscaldamento! Sofia vi aspetta.'
-      : pct < 60 ? 'Ottimo ritmo, spedizione in corso!'
-      : pct < 100 ? 'Quasi leggende di Sofia. Ancora poco!'
-      : 'Missione compiuta! Наздраве, crew!';
-    const t = TRAVELERS.find(x => x.id === active); $('#activeBadge').textContent = t ? t.name : '—';
-    if (pct === 100 && lastPct !== -1 && lastPct < 100) confetti();
-    lastPct = pct;
-  }
-
-  $('#filterBtn').addEventListener('click', () => {
-    onlyTodo = !onlyTodo; $('#filterBtn span').textContent = onlyTodo ? 'Mostra tutte' : 'Da fare'; renderChecklist();
+/* Places + modal */
+function renderPlaces() {
+  $('#placesGrid').innerHTML = PLACES.map(p => `
+    <button class="card reveal text-left group min-w-0" data-id="${p.id}" aria-label="Apri la scheda: ${p.title}">
+      <div class="tilt"><div class="photo aspect-[4/5] rounded-sm" data-photo="${p.id}"></div></div>
+      <p class="mt-5 text-[11px] uppercase tracking-[.2em] text-snow/40">${p.meta.split(' · ')[0]}</p>
+      <h3 class="mt-1 font-display text-xl leading-snug group-hover:text-gold transition">${p.title}</h3>
+      <span class="mt-3 inline-flex items-center gap-1.5 text-[13px] text-snow/55 group-hover:text-snow transition">Leggi la scheda <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+    </button>`).join('');
+  fillPhotos($('#placesGrid'));
+  const fine = matchMedia('(pointer:fine)').matches;
+  $$('#placesGrid .card').forEach(c => {
+    const t = $('.tilt', c);
+    if (fine) {
+      c.onmousemove = e => { const r = t.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; t.style.transform = `perspective(900px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`; };
+      c.onmouseleave = () => { t.style.transform = ''; };
+    }
+    c.onclick = () => openModal(c.dataset.id);
   });
-  // Conferma in pagina (doppio tocco) invece di confirm(), che in alcuni contesti è bloccato
-  let resetArmed = null;
-  $('#resetBtn').addEventListener('click', () => {
-    const btn = $('#resetBtn');
-    if (!resetArmed) {
-      btn.dataset.label = btn.innerHTML;
-      btn.innerHTML = 'Tocca ancora per azzerare';
-      btn.classList.add('bg-terra/30');
-      resetArmed = setTimeout(() => { btn.innerHTML = btn.dataset.label; btn.classList.remove('bg-terra/30'); resetArmed = null; icons(); }, 3000);
-      return;
-    }
-    clearTimeout(resetArmed); resetArmed = null;
-    btn.innerHTML = btn.dataset.label; btn.classList.remove('bg-terra/30'); icons();
-    state = {}; store.set('checks', state); renderChecklist(); renderCrew(); updateProgress(); toast('Checklist azzerata');
+}
+let lastFocus;
+function openModal(id) {
+  const p = PLACES.find(x => x.id === id); lastFocus = document.activeElement;
+  $('#mBody').innerHTML = `
+    <div class="grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+      <div class="photo h-72 sm:h-96 md:h-auto md:min-h-[540px]" data-photo="${p.id}"></div>
+      <div class="p-6 sm:p-10 min-w-0">
+        <p class="text-[11px] uppercase tracking-[.22em] text-gold pr-12">${p.meta}</p>
+        <h3 id="mTitle" class="mt-3 font-display text-3xl sm:text-4xl leading-tight">${p.title}</h3>
+        <p class="mt-5 text-[17px] leading-relaxed text-snow/85">${p.lead}</p>
+        <p class="mt-4 text-[15px] leading-relaxed text-snow/60">${p.story}</p>
+        <p class="mt-8 text-[11px] uppercase tracking-[.25em] text-snow/40">Consigli</p>
+        <ul class="mt-3 border-t hair">${p.tips.map(t => `<li class="py-3 border-b hair text-[14px] text-snow/75">${t}</li>`).join('')}</ul>
+      </div>
+    </div>`;
+  fillPhotos($('#mBody'));
+  $('#modal').classList.remove('off'); document.body.style.overflow = 'hidden';
+  icons(); setTimeout(() => $('#mClose').focus(), 30);
+}
+function closeModal() { $('#modal').classList.add('off'); document.body.style.overflow = ''; lastFocus && lastFocus.focus(); }
+$('#mClose').onclick = closeModal; $('#mBack').onclick = closeModal;
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#modal').classList.contains('off')) closeModal(); });
+
+/* Quirks */
+$$('.gest').forEach(b => b.onclick = () => {
+  const h = $('#head'); h.classList.remove('do-shake', 'do-nod'); void h.getBoundingClientRect();
+  const s = b.dataset.g === 'shake'; h.classList.add(s ? 'do-shake' : 'do-nod');
+  $('#gestOut').textContent = s ? 'Да · sì' : 'Не · no';
+});
+$('#phrases').innerHTML = PHRASES.map(([bg, tr, it]) => `
+  <button class="phrase text-left py-6 pr-4 border-b hair md:border-b-0 group" data-say="${bg}">
+    <span class="block font-display text-xl group-hover:text-gold transition">${bg}</span>
+    <span class="block mt-1 text-[13px] text-snow/50">${tr} · ${it}</span>
+  </button>`).join('');
+$$('.phrase').forEach(b => b.onclick = () => { try { const u = new SpeechSynthesisUtterance(b.dataset.say); u.lang = 'bg-BG'; u.rate = .85; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch {} });
+
+/* Crew + checklist */
+let checks = store.get('checks', {});
+let who = store.get('active', 'AP');
+let todoOnly = false;
+function renderCrew() {
+  $('#crewRow').innerHTML = TRAVELERS.map((t, i) => {
+    const n = Object.values(checks).filter(c => c.by === t.id).length; const on = who === t.id;
+    const borders = [i % 2 ? 'border-l' : '', i > 1 ? 'border-t md:border-t-0' : '', i === 2 ? 'md:border-l' : ''].join(' ');
+    return `<button class="pick text-left p-5 hair transition ${borders} ${on ? 'bg-night-raised' : 'hover:bg-white/[.03]'}" data-t="${t.id}" aria-pressed="${on}">
+      <span class="flex items-center justify-between gap-2">
+        <span class="grid place-items-center w-10 h-10 rounded-full border ${on ? 'border-gold text-gold' : 'hair text-snow/60'} text-[13px] font-medium">${t.id}</span>
+        ${on ? '<span class="text-[10px] uppercase tracking-[.2em] text-gold text-right">Sta spuntando</span>' : ''}
+      </span>
+      <span class="block mt-4 font-display text-xl">${t.name}</span>
+      <span class="block text-[13px] text-snow/45">${t.surname} · ${n} ${n === 1 ? 'missione' : 'missioni'}</span>
+    </button>`;
+  }).join('');
+  $$('#crewRow .pick').forEach(b => b.onclick = () => { who = b.dataset.t; store.set('active', who); renderCrew(); toast(`Ora spunta ${TRAVELERS.find(t => t.id === who).name}`); });
+}
+function renderChecklist() {
+  const items = CHECKLIST.filter(([id]) => !todoOnly || !checks[id]);
+  $('#checklist').innerHTML = items.length ? items.map(([id, text]) => {
+    const c = checks[id]; const t = c && TRAVELERS.find(x => x.id === c.by);
+    return `<li class="border-b hair"><label class="chk flex items-center gap-4 py-4 cursor-pointer">
+      <input type="checkbox" class="sr-only" id="chk-${id}" data-id="${id}" ${c ? 'checked' : ''}>
+      <span class="box grid place-items-center w-5 h-5 shrink-0 rounded-sm border border-snow/30 transition"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="#0F172A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+      <span class="txt flex-1 min-w-0 text-[15px] transition">${text}</span>
+      ${t ? `<span class="text-[11px] text-gold shrink-0">${t.name}</span>` : ''}
+    </label></li>`;
+  }).join('') : '<li class="md:col-span-2 py-10 text-center text-snow/50">Tutte le missioni sono completate.</li>';
+  $$('#checklist input').forEach(i => i.onchange = () => {
+    i.checked ? checks[i.dataset.id] = { by: who, at: Date.now() } : delete checks[i.dataset.id];
+    store.set('checks', checks); renderChecklist(); renderCrew(); progress();
   });
+}
+function progress() {
+  const done = CHECKLIST.filter(([id]) => checks[id]).length, tot = CHECKLIST.length;
+  $('#progNum').textContent = `${done} / ${tot}`;
+  $('#progBar').style.width = (done / tot * 100) + '%';
+  $('#progMsg').textContent = done === 0 ? 'Pronti a partire' : done === tot ? 'Missione compiuta. Наздраве!' : done > tot / 2 ? 'Più di metà fatto' : 'Spedizione in corso';
+}
+$('#filterBtn').onclick = () => { todoOnly = !todoOnly; $('#filterBtn').textContent = todoOnly ? 'Mostra tutte' : 'Solo da fare'; renderChecklist(); };
+let armed;
+const disarm = b => { b.textContent = 'Azzera'; b.classList.remove('border-terra', 'text-red-300'); };
+$('#resetBtn').onclick = () => {
+  const b = $('#resetBtn');
+  if (!armed) { b.textContent = 'Tocca ancora per azzerare'; b.classList.add('border-terra', 'text-red-300'); armed = setTimeout(() => { disarm(b); armed = null; }, 3000); return; }
+  clearTimeout(armed); armed = null; disarm(b);
+  checks = {}; store.set('checks', checks); renderChecklist(); renderCrew(); progress(); toast('Checklist azzerata');
+};
 
-  function burst(el) {
-    const r = el.getBoundingClientRect();
-    for (let i = 0; i < 12; i++) {
-      const s = document.createElement('span');
-      const ang = Math.random() * Math.PI * 2, dist = 30 + Math.random() * 40;
-      s.style.cssText = `position:fixed;left:${r.left + 28}px;top:${r.top + 26}px;width:6px;height:6px;border-radius:50%;z-index:100;pointer-events:none;background:${['#D4AF37','#EAB308','#F8FAFC','#991B1B'][i % 4]};transition:all .6s cubic-bezier(.2,.8,.2,1)`;
-      document.body.appendChild(s);
-      requestAnimationFrame(() => { s.style.transform = `translate(${Math.cos(ang) * dist}px,${Math.sin(ang) * dist}px) scale(0)`; s.style.opacity = '0'; });
-      setTimeout(() => s.remove(), 700);
-    }
-  }
-  function confetti() {
-    const colors = ['#D4AF37', '#EAB308', '#991B1B', '#F8FAFC'];
-    for (let i = 0; i < 120; i++) {
-      const c = document.createElement('span'); c.className = 'confetti';
-      c.style.left = Math.random() * 100 + 'vw'; c.style.background = colors[i % 4];
-      c.style.animationDuration = 2.5 + Math.random() * 2.5 + 's'; c.style.animationDelay = Math.random() * .8 + 's';
-      c.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
-      document.body.appendChild(c); setTimeout(() => c.remove(), 6000);
-    }
-    toast('Missione compiuta! Наздраве!');
-  }
+/* Packing */
+let packed = store.get('packing', {});
+$('#packing').innerHTML = PACKING.map(([id, text]) => `
+  <li class="border-b hair"><label class="chk flex items-center gap-4 py-3 cursor-pointer">
+    <input type="checkbox" class="sr-only" id="pack-${id}" data-p="${id}" ${packed[id] ? 'checked' : ''}>
+    <span class="box grid place-items-center w-5 h-5 shrink-0 rounded-sm border border-snow/30 transition"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="#0F172A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+    <span class="txt text-[14px] text-snow/80 transition">${text}</span>
+  </label></li>`).join('');
+$$('#packing input').forEach(i => i.onchange = () => { i.checked ? packed[i.dataset.p] = true : delete packed[i.dataset.p]; store.set('packing', packed); });
 
-  /* Packing list */
-  let packed = store.get('packing', {});
-  function renderPacking() {
-    $('#packing').innerHTML = PACKING.map(p => `
-      <li><label class="check-item flex items-center gap-3 cursor-pointer rounded-xl px-3 py-2 hover:bg-night/5 transition">
-        <input type="checkbox" class="sr-only" data-p="${p.id}" ${packed[p.id] ? 'checked' : ''} />
-        <span class="box grid place-items-center w-5 h-5 shrink-0 rounded-md border-2 border-night/40 transition">
-          <svg viewBox="0 0 24 24" class="w-3.5 h-3.5" fill="none" stroke="#0F172A" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
-        </span>
-        <span class="label text-sm font-medium" style="color:inherit">${p.text}</span>
-      </label></li>`).join('');
-    $$('#packing input').forEach(i => i.addEventListener('change', () => {
-      i.checked ? packed[i.dataset.p] = true : delete packed[i.dataset.p]; store.set('packing', packed);
-      if (Object.keys(packed).length === PACKING.length) toast('Valigia pronta! Si parte');
-    }));
-  }
+/* Converter */
+(function () {
+  const R = 1.95583, e = $('#eur'), b = $('#bgn'), f = v => isFinite(v) ? Math.round(v * 100) / 100 : '';
+  e.oninput = () => { b.value = e.value === '' ? '' : f(parseFloat(e.value) * R); };
+  b.oninput = () => { e.value = b.value === '' ? '' : f(parseFloat(b.value) / R); };
+  $('#swapBtn').onclick = () => { const v = e.value; e.value = b.value; b.value = v; e.oninput(); };
+  e.oninput();
+})();
 
-  /* Currency converter */
-  (function converter() {
-    const R = 1.95583; const e = $('#eur'), b = $('#bgn');
-    const fmt = v => (isFinite(v) ? Math.round(v * 100) / 100 : '');
-    e.addEventListener('input', () => { b.value = e.value === '' ? '' : fmt(parseFloat(e.value) * R); });
-    b.addEventListener('input', () => { e.value = b.value === '' ? '' : fmt(parseFloat(b.value) / R); });
-    $('#swapBtn').addEventListener('click', () => { const v = e.value; e.value = b.value; b.value = v; e.dispatchEvent(new Event('input')); });
-    b.value = fmt(10 * R);
-  })();
+/* Nav, share, reveal */
+function onScroll() {
+  const s = scrollY > 30, n = $('#nav');
+  n.classList.toggle('bg-night/90', s); n.classList.toggle('backdrop-blur', s); n.classList.toggle('border-b', s); n.classList.add('hair');
+  let cur = ''; $$('main section[id]').forEach(sec => { if (sec.getBoundingClientRect().top < innerHeight * .4) cur = sec.id; });
+  $$('.nav-link').forEach(a => a.classList.toggle('text-snow', a.getAttribute('href') === '#' + cur));
+}
+addEventListener('scroll', onScroll, { passive: true });
+$('#menuBtn').onclick = () => { const m = $('#mobileMenu'); const open = m.classList.toggle('hidden') === false; $('#menuBtn').setAttribute('aria-expanded', open); };
+$$('#mobileMenu a').forEach(a => a.onclick = () => $('#mobileMenu').classList.add('hidden'));
+$('#shareBtn').onclick = () => {
+  try { navigator.clipboard.writeText(SHARE_URL).then(() => toast('Link copiato')).catch(() => toast(SHARE_URL)); } catch { toast(SHARE_URL); }
+};
+function reveal() {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .1 });
+  $$('.reveal').forEach(el => { if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('pre'); io.observe(el); } });
+}
 
-  /* =====================================================================
-     NAV, SCROLL, REVEAL
-     ===================================================================== */
-  const navInner = $('#navInner');
-  function onScroll() {
-    const y = scrollY;
-    navInner.classList.toggle('glass', y > 40);
-    navInner.classList.toggle('shadow-gold', y > 40);
-    const h = document.documentElement.scrollHeight - innerHeight;
-    $('#scrollbar').style.width = (h > 0 ? y / h * 100 : 0) + '%';
-    // active link
-    let current = '';
-    $$('main section[id]').forEach(s => { if (s.getBoundingClientRect().top < innerHeight * .4) current = s.id; });
-    $$('.nav-link').forEach(a => a.classList.toggle('text-gold', a.getAttribute('href') === '#' + current));
-  }
-  addEventListener('scroll', onScroll, { passive: true }); onScroll();
-
-  $('#menuBtn').addEventListener('click', () => {
-    const m = $('#mobileMenu'); const open = m.classList.toggle('hidden') === false;
-    $('#menuBtn').setAttribute('aria-expanded', open);
-  });
-  $$('#mobileMenu a').forEach(a => a.addEventListener('click', () => $('#mobileMenu').classList.add('hidden')));
-
-  function observeReveal() {
-    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
-    $$('.reveal:not(.in)').forEach(el => { if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('pre'); io.observe(el); } });
-  }
-
-  /* =====================================================================
-     SNOW
-     ===================================================================== */
-  (function snow() {
-    const c = $('#snow'), ctx = c.getContext('2d');
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let on = store.get('snow', !reduce), flakes = [], W, H, raf;
-    function resize() { W = c.width = innerWidth * devicePixelRatio; H = c.height = innerHeight * devicePixelRatio; c.style.width = innerWidth + 'px'; c.style.height = innerHeight + 'px'; }
-    function make() {
-      const n = Math.min(160, Math.floor(innerWidth / 9));
-      flakes = Array.from({ length: n }, () => ({ x: Math.random() * W, y: Math.random() * H, r: (Math.random() * 2.2 + .6) * devicePixelRatio, s: Math.random() * .8 + .3, d: Math.random() * Math.PI * 2, o: Math.random() * .6 + .3 }));
-    }
-    function draw() {
-      ctx.clearRect(0, 0, W, H);
-      for (const f of flakes) {
-        f.y += f.s * devicePixelRatio; f.d += .01; f.x += Math.sin(f.d) * .5 * devicePixelRatio;
-        if (f.y > H) { f.y = -5; f.x = Math.random() * W; }
-        ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(248,250,252,${f.o})`; ctx.fill();
-      }
-      raf = requestAnimationFrame(draw);
-    }
-    function apply() {
-      cancelAnimationFrame(raf); ctx.clearRect(0, 0, W, H);
-      if (on) draw();
-      $('#snowToggle').classList.toggle('bg-gold/20', on);
-    }
-    resize(); make(); apply();
-    addEventListener('resize', () => { resize(); make(); });
-    $('#snowToggle').addEventListener('click', () => { on = !on; store.set('snow', on); apply(); toast(on ? 'Neve attivata' : 'Neve disattivata'); });
-  })();
-
-  /* Share: copia il link della guida */
-  const SHARE_URL = 'https://claude.ai/artifact/Cd3VMc1xaedWckTSKibuMs';
-  $('#shareBtn').addEventListener('click', () => {
-    const done = () => toast('Link copiato: mandalo alla crew!');
-    try { navigator.clipboard.writeText(SHARE_URL).then(done).catch(() => toast(SHARE_URL)); }
-    catch { toast(SHARE_URL); }
-  });
-
-  /* =====================================================================
-     INIT
-     ===================================================================== */
-  renderTabs(); renderDay(); renderBest(); renderCrew(); renderCatTabs(); renderChecklist(); renderPacking(); updateProgress();
-  icons(); observeReveal();
-  </script>
+/* Init */
+fillPhotos(); renderCredits(); renderDays(); renderPlaces(); renderCrew(); renderChecklist(); progress(); onScroll(); icons(); reveal();
+</script>
 </body>
 </html>
