@@ -96,8 +96,9 @@
     @keyframes marquee { to { transform: translateX(-50%); } }
 
     /* Reveal on scroll */
-    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
-    .reveal.in { opacity: 1; transform: none; }
+    .reveal { transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+    .reveal.pre { opacity: 0; transform: translateY(28px); }
+    .reveal.pre.in { opacity: 1; transform: none; }
 
     /* 3D cards */
     .tilt-wrap { perspective: 1200px; }
@@ -165,7 +166,7 @@
   </style>
 </head>
 
-<body class="grain antialiased">
+<body class="antialiased">
 
   <!-- Snow canvas (whole page) -->
   <canvas id="snow" class="pointer-events-none fixed inset-0 z-40" aria-hidden="true"></canvas>
@@ -176,7 +177,7 @@
   </div>
 
   <!-- ============ NAV ============ -->
-  <header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500">
+  <header id="nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500" style="padding-top:env(safe-area-inset-top,0px)">
     <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="mt-3 flex items-center justify-between rounded-2xl px-4 py-3 transition-all duration-500" id="navInner">
         <a href="#top" class="flex items-center gap-2 group" aria-label="Torna su">
@@ -191,6 +192,9 @@
           <li><a class="nav-link px-3 py-2 rounded-lg hover:text-gold transition" href="#guide">Smart Guide</a></li>
         </ul>
         <div class="flex items-center gap-2">
+          <button id="shareBtn" class="hidden sm:inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-gold text-night text-sm font-bold hover:bg-gold-light transition" aria-label="Copia il link della guida">
+            <i data-lucide="share-2" class="w-4 h-4"></i><span>Condividi</span>
+          </button>
           <button id="snowToggle" class="grid place-items-center w-10 h-10 rounded-xl gold-border hover:bg-gold/10 transition" aria-label="Attiva/disattiva la neve" title="Neve on/off">
             <i data-lucide="snowflake" class="w-5 h-5 text-gold"></i>
           </button>
@@ -216,9 +220,7 @@
     <section class="relative min-h-[100svh] flex flex-col overflow-hidden" aria-labelledby="heroTitle">
       <!-- Background layers -->
       <div class="absolute inset-0 -z-0">
-        <div class="img-shell absolute inset-0">
-          <img id="heroImg" data-img="hero" alt="" class="w-full h-full object-cover opacity-30 scale-110" />
-        </div>
+        <div class="absolute inset-0 bg-[linear-gradient(180deg,#070C1A_0%,#0F172A_55%,#1a1426_100%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_0%,rgba(212,175,55,.18),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-[radial-gradient(50%_40%_at_85%_30%,rgba(153,27,27,.35),transparent_70%)]"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-night/40 via-night/30 to-night"></div>
@@ -652,6 +654,7 @@
       <div class="text-sm text-snow/40 md:text-right">
         <p>Fatta con <span class="text-terra">♥</span> per la crew. Наздраве!</p>
         <p class="mt-1">Orari e prezzi possono cambiare: verificate prima di partire.</p>
+        <p class="mt-1">Illustrazioni originali disegnate per questa guida.</p>
       </div>
     </div>
   </footer>
@@ -676,16 +679,233 @@
   /* =====================================================================
      DATA — modifica qui testi e foto (URL Unsplash)
      ===================================================================== */
-  // Immagini Unsplash. Se una foto non si carica, il design mostra
-  // automaticamente un fondale oro/terracotta con icona: sostituisci pure gli URL.
-  const UNSPLASH = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=80`;
-  const IMG = {
-    hero:    UNSPLASH('photo-1575550959106-5a7defe28b56'),  // Sofia skyline / Nevsky
-    nevsky:  UNSPLASH('photo-1586359716568-3e1907e9cfd9'),  // Cattedrale Aleksandr Nevskij
-    vitosha: UNSPLASH('photo-1551524559-8af4e6624178'),     // montagna innevata
-    serdica: UNSPLASH('photo-1600021283474-6e3e6dd5e6b6'),  // rovine romane
-    vazov:   UNSPLASH('photo-1503095396549-807759245b35')   // teatro
+  /* ---------------------------------------------------------------------
+     POSTER ART — illustrazioni vettoriali in stile "travel poster".
+     Sono disegnate in SVG direttamente nella pagina: niente foto esterne,
+     quindi si vedono sempre, anche offline e nella pagina condivisa.
+     --------------------------------------------------------------------- */
+  function rng(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+  function flakes(n, seed, h = 400, op = .9) {
+    const r = rng(seed); let o = '';
+    for (let i = 0; i < n; i++) o += `<circle cx="${(r() * 300).toFixed(1)}" cy="${(r() * h).toFixed(1)}" r="${(r() * 1.6 + .5).toFixed(2)}" fill="#F8FAFC" opacity="${(r() * op * .7 + op * .3).toFixed(2)}"/>`;
+    return o;
+  }
+  function starsSvg(n, seed, h = 160) {
+    const r = rng(seed); let o = '';
+    for (let i = 0; i < n; i++) o += `<circle cx="${(r() * 300).toFixed(1)}" cy="${(r() * h).toFixed(1)}" r="${(r() * .9 + .3).toFixed(2)}" fill="#FFF3C4" opacity="${(r() * .7 + .2).toFixed(2)}"/>`;
+    return o;
+  }
+  function frame(label) {
+    return `<rect x="10" y="10" width="280" height="380" fill="none" stroke="#D4AF37" stroke-opacity=".55" stroke-width="1"/>
+      <rect x="14" y="14" width="272" height="372" fill="none" stroke="#D4AF37" stroke-opacity=".25" stroke-width=".6"/>
+      <text x="150" y="30" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="8" letter-spacing="3.5" fill="#D4AF37" opacity=".85">${label}</text>`;
+  }
+  function trees(list, seed) {
+    return list.map(([x, y, s]) => `<g transform="translate(${x} ${y}) scale(${s})">
+      <path d="M0 -34 L10 -18 L5 -18 L14 -4 L7 -4 L17 10 L-17 10 L-7 -4 L-14 -4 L-5 -18 L-10 -18 Z" fill="#0B1120"/>
+      <path d="M0 -34 L6 -24 L2 -22 Z M-5 -18 L-10 -18 L-8 -14 Z M7 -4 L12 -1 L5 -2 Z M-7 -4 L-12 -1 L-5 -2Z" fill="#F8FAFC" opacity=".85"/>
+      <rect x="-2" y="10" width="4" height="6" fill="#0B1120"/></g>`).join('');
+  }
+
+  const POSTERS = {
+    nevsky: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione della Cattedrale Aleksandr Nevskij di notte sotto la neve">
+      <defs>
+        <linearGradient id="pn-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070C1A"/><stop offset=".55" stop-color="#16213B"/><stop offset=".85" stop-color="#5B1A1A"/><stop offset="1" stop-color="#8A3A1A"/></linearGradient>
+        <radialGradient id="pn-halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#F1D67A" stop-opacity=".55"/><stop offset=".6" stop-color="#D4AF37" stop-opacity=".12"/><stop offset="1" stop-color="#D4AF37" stop-opacity="0"/></radialGradient>
+        <linearGradient id="pn-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6D0"/><stop offset=".3" stop-color="#E9C858"/><stop offset=".65" stop-color="#B48A1C"/><stop offset="1" stop-color="#6B4E0C"/></linearGradient>
+        <linearGradient id="pn-wall" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2A3550"/><stop offset=".5" stop-color="#3A4766"/><stop offset="1" stop-color="#1C253B"/></linearGradient>
+        <radialGradient id="pn-win" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".6" stop-color="#EAB308"/><stop offset="1" stop-color="#B45309"/></radialGradient>
+        <radialGradient id="pn-lamp" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FDE68A" stop-opacity=".8"/><stop offset="1" stop-color="#FDE68A" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="300" height="400" fill="url(#pn-sky)"/>
+      ${starsSvg(70, 7, 200)}
+      <circle cx="238" cy="70" r="15" fill="#FDF6D8"/><circle cx="245" cy="64" r="14" fill="#0A1122"/>
+      <circle cx="150" cy="185" r="140" fill="url(#pn-halo)"/>
+      <path d="M0 305 h22 v-26 h18 v26 h12 v-40 h16 v40 h170 v-30 h14 v-18 h16 v48 h12 v-22 h20 V400 H0Z" fill="#0E1528"/>
+      <!-- bell tower -->
+      <rect x="38" y="178" width="40" height="150" fill="url(#pn-wall)"/>
+      <rect x="44" y="196" width="8" height="22" rx="4" fill="url(#pn-win)"/><rect x="64" y="196" width="8" height="22" rx="4" fill="url(#pn-win)"/>
+      <rect x="47" y="236" width="22" height="30" rx="11" fill="#0B1120" opacity=".6"/>
+      <path d="M36 180 Q58 146 80 180Z" fill="url(#pn-gold)"/>
+      <rect x="52" y="140" width="12" height="16" fill="url(#pn-wall)"/>
+      <ellipse cx="58" cy="139" rx="9" ry="11" fill="url(#pn-gold)"/>
+      <path d="M58 128 V106 M52 114 H64 M54 120 H62" stroke="#E9C858" stroke-width="2" stroke-linecap="round"/>
+      <!-- main body -->
+      <rect x="72" y="252" width="166" height="78" fill="url(#pn-wall)"/>
+      <rect x="96" y="216" width="118" height="40" fill="url(#pn-wall)"/>
+      <path d="M78 256 Q99 214 120 256Z" fill="url(#pn-gold)"/>
+      <path d="M190 256 Q211 214 232 256Z" fill="url(#pn-gold)"/>
+      <path d="M99 226 V210 M94 216 H104 M211 226 V210 M206 216 H216" stroke="#E9C858" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M128 218 Q140 200 152 218Z M158 218 Q170 200 182 218Z" fill="url(#pn-gold)" opacity=".9"/>
+      <!-- drum + main dome -->
+      <rect x="116" y="166" width="78" height="52" fill="url(#pn-wall)"/>
+      <path d="M108 170 Q155 74 202 170Z" fill="url(#pn-gold)"/>
+      <path d="M124 160 Q140 112 155 98" stroke="#FFF6D0" stroke-width="2.5" fill="none" opacity=".55" stroke-linecap="round"/>
+      <path d="M155 96 V60 M144 72 H166 M147 82 H163" stroke="#E9C858" stroke-width="2.6" stroke-linecap="round"/>
+      <g fill="url(#pn-win)">
+        <rect x="124" y="178" width="8" height="28" rx="4"/><rect x="140" y="178" width="8" height="28" rx="4"/><rect x="162" y="178" width="8" height="28" rx="4"/><rect x="178" y="178" width="8" height="28" rx="4"/>
+        <rect x="88" y="270" width="12" height="34" rx="6"/><rect x="110" y="270" width="12" height="34" rx="6"/><rect x="188" y="270" width="12" height="34" rx="6"/><rect x="210" y="270" width="12" height="34" rx="6"/>
+        <rect x="108" y="226" width="7" height="20" rx="3.5"/><rect x="195" y="226" width="7" height="20" rx="3.5"/>
+      </g>
+      <path d="M137 330 V292 Q155 268 173 292 V330Z" fill="#EAB308" opacity=".85"/>
+      <path d="M143 330 V296 Q155 280 167 296 V330Z" fill="#FFF3C4" opacity=".7"/>
+      <!-- lamps -->
+      <circle cx="22" cy="300" r="22" fill="url(#pn-lamp)"/><rect x="21" y="300" width="2" height="40" fill="#0B1120"/><circle cx="22" cy="300" r="3" fill="#FFF3C4"/>
+      <circle cx="278" cy="300" r="22" fill="url(#pn-lamp)"/><rect x="277" y="300" width="2" height="40" fill="#0B1120"/><circle cx="278" cy="300" r="3" fill="#FFF3C4"/>
+      <!-- snow -->
+      <path d="M0 330 Q80 318 150 326 T300 324 V400 H0Z" fill="#E8EEF6"/>
+      <path d="M0 348 Q100 338 190 350 T300 346 V400 H0Z" fill="#F8FAFC"/>
+      <path d="M120 400 L145 330 L165 330 L190 400Z" fill="#CBD5E1" opacity=".5"/>
+      <g fill="#0B1120"><circle cx="100" cy="352" r="3"/><rect x="98" y="355" width="4" height="10" rx="2"/><circle cx="108" cy="354" r="2.6"/><rect x="106" y="357" width="4" height="9" rx="2"/></g>
+      ${flakes(90, 11)}
+      ${frame('СОФИЯ · 1912')}
+    </svg>`,
+
+    vitosha: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione del Monte Vitosha innevato all'alba con seggiovia e abeti">
+      <defs>
+        <linearGradient id="pv-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16213B"/><stop offset=".38" stop-color="#7A2424"/><stop offset=".62" stop-color="#D97B2B"/><stop offset=".8" stop-color="#F1D67A"/></linearGradient>
+        <linearGradient id="pv-far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8C6A7A"/><stop offset="1" stop-color="#4B4A66"/></linearGradient>
+        <linearGradient id="pv-mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E4A68"/><stop offset="1" stop-color="#26304A"/></linearGradient>
+        <linearGradient id="pv-near" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1C2540"/><stop offset="1" stop-color="#0F172A"/></linearGradient>
+        <linearGradient id="pv-snow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D5DEEB"/></linearGradient>
+      </defs>
+      <rect width="300" height="400" fill="url(#pv-sky)"/>
+      <circle cx="160" cy="200" r="46" fill="#FFF3C4" opacity=".95"/>
+      <circle cx="160" cy="200" r="70" fill="#FFF3C4" opacity=".15"/>
+      <path d="M0 236 L40 214 L78 226 L128 168 L160 190 L196 160 L238 196 L270 184 L300 200 V400 H0Z" fill="url(#pv-far)"/>
+      <path d="M128 168 L140 182 L134 183 L146 194 L128 188 L117 192 L121 182Z M196 160 L210 176 L203 177 L216 188 L196 182 L186 186 L190 176Z" fill="url(#pv-snow)" opacity=".95"/>
+      <path d="M0 270 L44 244 L90 258 L142 222 L188 252 L236 230 L300 254 V400 H0Z" fill="url(#pv-mid)"/>
+      <path d="M142 222 L158 236 L150 237 L166 250 L142 243 L128 248 L134 236Z M236 230 L250 242 L243 243 L258 254 L236 248 L224 252 L229 242Z M44 244 L56 254 L50 255 L60 262 L44 258 L34 262 L38 254Z" fill="url(#pv-snow)" opacity=".9"/>
+      <text x="142" y="214" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="7" fill="#FFF3C4" letter-spacing="1">▲ 2290 m</text>
+      <path d="M0 312 L60 284 L118 300 L176 272 L234 292 L300 278 V400 H0Z" fill="url(#pv-near)"/>
+      <!-- chairlift -->
+      <path d="M8 244 L292 318" stroke="#0B1120" stroke-width="1.2"/>
+      <g stroke="#0B1120" stroke-width="1.1" fill="#991B1B">
+        <line x1="70" y1="260" x2="70" y2="272"/><rect x="64" y="272" width="12" height="6" rx="1"/>
+        <line x1="140" y1="279" x2="140" y2="291"/><rect x="134" y="291" width="12" height="6" rx="1"/>
+        <line x1="210" y1="297" x2="210" y2="309"/><rect x="204" y="309" width="12" height="6" rx="1"/>
+      </g>
+      <path d="M100 252 L104 330 M96 252 H108" stroke="#0B1120" stroke-width="2"/>
+      <path d="M0 336 Q90 316 170 330 T300 322 V400 H0Z" fill="url(#pv-snow)"/>
+      ${trees([[30, 330, 1.1], [52, 338, .8], [250, 322, 1.2], [276, 332, .9], [222, 338, .7], [12, 352, .9]], 3)}
+      <path d="M120 400 Q150 360 196 338" stroke="#C7D2E2" stroke-width="3" fill="none" stroke-dasharray="2 5" stroke-linecap="round"/>
+      ${flakes(60, 21, 400, .8)}
+      ${frame('ВИТОША · 2290 M')}
+    </svg>`,
+
+    serdica: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione in sezione: la città moderna in superficie e le rovine romane di Serdica sotto la strada">
+      <defs>
+        <linearGradient id="ps-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B1120"/><stop offset="1" stop-color="#26304A"/></linearGradient>
+        <linearGradient id="ps-earth" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2412"/><stop offset=".5" stop-color="#3B170C"/><stop offset="1" stop-color="#220C06"/></linearGradient>
+        <linearGradient id="ps-stone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#BFAE8C"/><stop offset=".45" stop-color="#F0E6CF"/><stop offset="1" stop-color="#9C8A68"/></linearGradient>
+        <linearGradient id="ps-beam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF3C4" stop-opacity=".55"/><stop offset="1" stop-color="#FFF3C4" stop-opacity="0"/></linearGradient>
+        <pattern id="ps-brick" width="20" height="16" patternUnits="userSpaceOnUse"><rect width="20" height="16" fill="#8E2A1C"/><path d="M0 8 H20 M10 0 V8 M0 8 V16 M20 8 V16" stroke="#3B170C" stroke-width="1"/></pattern>
+      </defs>
+      <rect width="300" height="160" fill="url(#ps-sky)"/>
+      ${starsSvg(30, 5, 90)}
+      <!-- modern city -->
+      <g fill="#111C33">
+        <rect x="18" y="86" width="40" height="70"/><rect x="62" y="64" width="34" height="92"/><rect x="200" y="74" width="44" height="82"/><rect x="248" y="96" width="36" height="60"/>
+      </g>
+      <g fill="#EAB308" opacity=".8">
+        <rect x="26" y="96" width="5" height="6"/><rect x="40" y="110" width="5" height="6"/><rect x="70" y="76" width="5" height="6"/><rect x="84" y="98" width="5" height="6"/><rect x="210" y="86" width="5" height="6"/><rect x="226" y="104" width="5" height="6"/><rect x="258" y="108" width="5" height="6"/>
+      </g>
+      <!-- Sveta Nedelya-like dome -->
+      <rect x="112" y="104" width="76" height="52" fill="#1E293B"/><path d="M118 106 Q150 62 182 106Z" fill="#D4AF37"/><path d="M150 72 V56 M144 62 H156" stroke="#D4AF37" stroke-width="2"/>
+      <!-- tram + street (yellow pavé) -->
+      <path d="M0 140 H300" stroke="#334155" stroke-width="1"/>
+      <rect x="216" y="136" width="60" height="18" rx="4" fill="#991B1B"/><rect x="222" y="140" width="48" height="6" fill="#FDE68A" opacity=".8"/>
+      <rect x="0" y="156" width="300" height="10" fill="#EAB308"/>
+      <path d="M0 161 H300" stroke="#A16207" stroke-width=".8" stroke-dasharray="6 3"/>
+      <rect x="0" y="152" width="300" height="5" fill="#F8FAFC" opacity=".9"/>
+      <!-- metro entrance -->
+      <circle cx="40" cy="128" r="10" fill="#F8FAFC"/><text x="40" y="132.5" text-anchor="middle" font-family="Syne, sans-serif" font-weight="800" font-size="12" fill="#991B1B">M</text>
+      <rect x="39" y="138" width="2" height="18" fill="#F8FAFC"/>
+      <!-- underground -->
+      <rect y="166" width="300" height="234" fill="url(#ps-earth)"/>
+      <path d="M0 196 Q150 188 300 198 M0 232 Q150 240 300 228" stroke="#220C06" stroke-width="1" opacity=".6" fill="none"/>
+      <polygon points="120,166 180,166 230,400 70,400" fill="url(#ps-beam)"/>
+      <!-- opus mixtum wall -->
+      <rect x="18" y="236" width="80" height="120" fill="url(#ps-brick)"/>
+      <rect x="18" y="262" width="80" height="12" fill="#D9CBAA"/><rect x="18" y="304" width="80" height="12" fill="#D9CBAA"/>
+      <path d="M18 236 L30 226 L44 236 L60 222 L76 234 L98 228 L98 236Z" fill="url(#ps-brick)"/>
+      <!-- arch -->
+      <path d="M200 356 V280 Q240 236 280 280 V356 H262 V286 Q240 262 218 286 V356Z" fill="url(#ps-brick)"/>
+      <path d="M200 280 Q240 236 280 280" stroke="#D9CBAA" stroke-width="5" fill="none"/>
+      <!-- columns -->
+      <g>
+        <rect x="118" y="262" width="16" height="94" fill="url(#ps-stone)"/><rect x="112" y="254" width="28" height="9" fill="#E9DFC6"/><rect x="114" y="350" width="24" height="8" fill="#CDBD9A"/>
+        <path d="M150 356 V300 L156 292 L163 302 L166 296 V356Z" fill="url(#ps-stone)"/><rect x="146" y="350" width="24" height="8" fill="#CDBD9A"/>
+        <rect x="178" y="320" width="16" height="36" fill="url(#ps-stone)"/><rect x="174" y="350" width="24" height="8" fill="#CDBD9A"/>
+        <rect x="160" y="340" width="34" height="10" rx="2" fill="#B9A882" transform="rotate(-8 177 345)"/>
+      </g>
+      <!-- mosaic floor -->
+      <rect x="0" y="358" width="300" height="42" fill="#2A120A"/>
+      ${Array.from({ length: 15 }, (_, i) => `<rect x="${i * 20 + 3}" y="364" width="14" height="14" fill="${i % 3 === 0 ? '#D4AF37' : i % 3 === 1 ? '#991B1B' : '#E9DFC6'}" opacity=".85" transform="rotate(45 ${i * 20 + 10} 371)"/>`).join('')}
+      <text x="150" y="394" text-anchor="middle" font-family="Cinzel, serif" font-weight="700" font-size="9" letter-spacing="4" fill="#E9DFC6" opacity=".8">SERDICA · II–VI SEC.</text>
+      <!-- tiny visitors -->
+      <g fill="#0B1120"><circle cx="106" cy="334" r="3"/><rect x="104" y="337" width="4" height="12" rx="2"/></g>
+      ${frame('СЕРДИКА · ROMA ANTICA')}
+    </svg>`,
+
+    vazov: () => `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="w-full h-full block" role="img" aria-label="Illustrazione del Teatro Nazionale Ivan Vazov illuminato, con fontana e luci di Natale">
+      <defs>
+        <linearGradient id="pt-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A1122"/><stop offset="1" stop-color="#1F2C4A"/></linearGradient>
+        <linearGradient id="pt-red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7F1D1D"/><stop offset=".5" stop-color="#B91C1C"/><stop offset="1" stop-color="#7F1D1D"/></linearGradient>
+        <linearGradient id="pt-col" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#CBD5E1"/><stop offset=".5" stop-color="#FFFFFF"/><stop offset="1" stop-color="#B6C2D3"/></linearGradient>
+        <radialGradient id="pt-glow" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#FDE68A" stop-opacity=".35"/><stop offset="1" stop-color="#FDE68A" stop-opacity="0"/></radialGradient>
+        <radialGradient id="pt-win" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#FFF3C4"/><stop offset="1" stop-color="#EAB308"/></radialGradient>
+      </defs>
+      <rect width="300" height="400" fill="url(#pt-sky)"/>
+      ${starsSvg(40, 9, 130)}
+      <ellipse cx="150" cy="230" rx="170" ry="130" fill="url(#pt-glow)"/>
+      <!-- wings -->
+      <rect x="22" y="182" width="64" height="134" fill="url(#pt-red)"/><rect x="214" y="182" width="64" height="134" fill="url(#pt-red)"/>
+      <path d="M18 184 H90 L82 166 H26Z M210 184 H282 L274 166 H218Z" fill="#1E293B"/>
+      <path d="M40 166 Q54 140 68 166Z M232 166 Q246 140 260 166Z" fill="#D4AF37"/>
+      <g fill="url(#pt-win)">
+        <rect x="34" y="200" width="12" height="22" rx="6"/><rect x="62" y="200" width="12" height="22" rx="6"/><rect x="226" y="200" width="12" height="22" rx="6"/><rect x="254" y="200" width="12" height="22" rx="6"/>
+        <rect x="34" y="250" width="12" height="26" rx="6"/><rect x="62" y="250" width="12" height="26" rx="6"/><rect x="226" y="250" width="12" height="26" rx="6"/><rect x="254" y="250" width="12" height="26" rx="6"/>
+      </g>
+      <g fill="#F8FAFC" opacity=".9"><rect x="22" y="236" width="64" height="4"/><rect x="214" y="236" width="64" height="4"/><rect x="22" y="290" width="64" height="4"/><rect x="214" y="290" width="64" height="4"/></g>
+      <!-- central body -->
+      <rect x="80" y="196" width="140" height="120" fill="url(#pt-red)"/>
+      <path d="M72 200 L150 140 L228 200Z" fill="#F8FAFC"/>
+      <path d="M90 194 L150 150 L210 194Z" fill="#E2E8F0"/>
+      <path d="M118 190 Q130 172 140 182 Q150 166 160 182 Q170 172 182 190Z" fill="#D4AF37" opacity=".85"/>
+      <!-- quadriga hint on apex -->
+      <g fill="#D4AF37"><path d="M136 140 l6 -12 l6 6 l4 -10 l4 10 l6 -6 l6 12Z"/><rect x="134" y="138" width="32" height="4"/></g>
+      <rect x="76" y="198" width="148" height="7" fill="#F8FAFC"/>
+      <!-- columns -->
+      <g fill="url(#pt-col)">
+        <rect x="90" y="206" width="9" height="94"/><rect x="112" y="206" width="9" height="94"/><rect x="134" y="206" width="9" height="94"/><rect x="157" y="206" width="9" height="94"/><rect x="179" y="206" width="9" height="94"/><rect x="201" y="206" width="9" height="94"/>
+      </g>
+      <g fill="url(#pt-win)" opacity=".9"><rect x="102" y="250" width="8" height="40" rx="4"/><rect x="146" y="250" width="8" height="40" rx="4"/><rect x="190" y="250" width="8" height="40" rx="4"/></g>
+      <rect x="76" y="298" width="148" height="6" fill="#F8FAFC"/>
+      <rect x="70" y="304" width="160" height="6" fill="#CBD5E1"/><rect x="62" y="310" width="176" height="6" fill="#B6C2D3"/>
+      <!-- string lights -->
+      <path d="M0 120 Q75 160 150 128 T300 120" stroke="#334155" stroke-width="1" fill="none"/>
+      ${Array.from({ length: 13 }, (_, i) => { const x = i * 25; const y = 120 + Math.sin((i / 12) * Math.PI * 2) * -10 + (i < 6 ? 16 * Math.sin(i / 6 * Math.PI) : 0); return `<circle cx="${x}" cy="${y.toFixed(1)}" r="2.6" fill="${i % 2 ? '#EAB308' : '#F8FAFC'}"/><circle cx="${x}" cy="${y.toFixed(1)}" r="7" fill="#FDE68A" opacity=".18"/>`; }).join('')}
+      <!-- ground + fountain -->
+      <path d="M0 318 H300 V400 H0Z" fill="#E8EEF6"/>
+      <path d="M0 340 Q150 330 300 342 V400 H0Z" fill="#F8FAFC"/>
+      <ellipse cx="150" cy="356" rx="62" ry="12" fill="#94A3B8"/>
+      <ellipse cx="150" cy="352" rx="56" ry="9" fill="#1E3A5F"/>
+      <path d="M150 350 Q146 320 150 302 Q154 320 150 350Z" fill="#E0F2FE" opacity=".8"/>
+      <path d="M150 312 Q130 318 118 346 M150 312 Q170 318 182 346 M150 318 Q138 326 132 348 M150 318 Q162 326 168 348" stroke="#E0F2FE" stroke-width="1.6" fill="none" opacity=".75"/>
+      <!-- christmas tree -->
+      <g transform="translate(36 352)">
+        <path d="M0 -70 L18 -40 L10 -40 L26 -14 L16 -14 L32 10 L-32 10 L-16 -14 L-26 -14 L-10 -40 L-18 -40Z" fill="#14532D"/>
+        <path d="M0 -78 l3 7 h7 l-6 4 l2 7 l-6 -4 l-6 4 l2 -7 l-6 -4 h7Z" fill="#EAB308"/>
+        <g fill="#EAB308"><circle cx="-6" cy="-44" r="2"/><circle cx="8" cy="-30" r="2"/><circle cx="-12" cy="-18" r="2"/><circle cx="14" cy="-6" r="2"/><circle cx="-4" cy="0" r="2"/></g>
+        <g fill="#F87171"><circle cx="4" cy="-52" r="1.8"/><circle cx="-14" cy="-4" r="1.8"/><circle cx="18" cy="4" r="1.8"/></g>
+        <rect x="-4" y="10" width="8" height="8" fill="#3B170C"/>
+      </g>
+      ${flakes(70, 31)}
+      ${frame('НАРОДЕН ТЕАТЪР · 1906')}
+    </svg>`
   };
+
 
   const TRAVELERS = [
     { id: 'RM', name: 'Riccardo', surname: 'Martino', grad: 'from-gold to-pave' },
@@ -750,7 +970,6 @@
   const PLACES = [
     {
       id: 'nevsky', title: 'Cattedrale Aleksandr Nevskij', short: 'Cupole d’oro', icon: 'church', year: '1882–1912',
-      img: IMG.nevsky,
       lead: 'Il simbolo di Sofia: una delle più grandi cattedrali ortodosse dei Balcani, con 12 cupole e la cupola centrale rivestita d’oro.',
       story: 'Costruita in stile neo-bizantino in memoria dei soldati russi caduti nella guerra di liberazione della Bulgaria dal dominio ottomano (1877–78), prende il nome dal principe-santo Aleksandr Nevskij. All’interno: marmi italiani, mosaici veneziani, alabastro brasiliano e un’acustica incredibile. Nella cripta c’è la più grande collezione di icone ortodosse del paese.',
       tips: ['Andateci la mattina presto o durante una liturgia: i canti sono da brividi.', 'Ingresso gratuito; la cripta-museo delle icone è a pagamento.', 'Di sera la cattedrale illuminata con la neve è la foto del viaggio.'],
@@ -758,7 +977,6 @@
     },
     {
       id: 'vitosha', title: 'Monte Vitosha', short: 'Neve a 30 minuti', icon: 'mountain-snow', year: '2.290 m',
-      img: IMG.vitosha,
       lead: 'La montagna di casa dei sofioti: parco naturale dal 1934, il più antico dei Balcani, che domina la città a sud.',
       story: 'Il Cherni Vrah ("Picco Nero") tocca i 2.290 metri. In inverno l’area di Aleko diventa una piccola stazione sciistica, ma anche senza sci è perfetta per una passeggiata sulla neve. Le "Zlatnite Mostove" (Ponti d’Oro) sono un fiume di massi giganti formatosi durante l’era glaciale.',
       tips: ['Scarpe impermeabili e antiscivolo obbligatorie.', 'In quota fa 6–10° in meno che in città.', 'Partite entro le 14: alle 17 è già buio.'],
@@ -766,7 +984,6 @@
     },
     {
       id: 'serdica', title: 'Antica Serdica', short: 'Roma sotto la metro', icon: 'columns-3', year: 'II–VI sec.',
-      img: IMG.serdica,
       lead: 'Sotto i piedi del centro c’è la città romana di Serdica, l’antenata di Sofia, che Costantino chiamava "la mia Roma".',
       story: 'Durante gli scavi per la metropolitana sono emersi strade lastricate, terme, edifici e una basilica paleocristiana. Oggi il Complesso Archeologico Serdica si visita all’aperto e gratuitamente, a metà tra le banchine e la piazza: uno degli esempi più affascinanti di città stratificata in Europa.',
       tips: ['È sulla strada: abbinatela alla Rotonda di San Giorgio.', 'Guardate anche la chiesa di Sveta Petka, semi-interrata proprio lì accanto.', 'Ottima tappa se fa troppo freddo: è in parte coperta.'],
@@ -774,7 +991,6 @@
     },
     {
       id: 'vazov', title: 'Teatro Nazionale Ivan Vazov', short: 'Palcoscenico neoclassico', icon: 'drama', year: '1906',
-      img: IMG.vazov,
       lead: 'Il teatro più importante della Bulgaria, con la facciata rossa e bianca e il frontone con Apollo e le muse.',
       story: 'Progettato dagli architetti viennesi Fellner & Helmer (gli stessi di molti teatri dell’Impero austro-ungarico) e intitolato al più grande scrittore bulgaro, Ivan Vazov. Davanti c’è il Giardino della Città con la fontana: durante le feste è il cuore del mercatino di Natale.',
       tips: ['Controllate il programma online: a fine dicembre ci sono spettacoli speciali.', 'Anche senza biglietto, la facciata illuminata vale la sosta.', 'Il giardino di fronte è il punto d’incontro preferito dei sofioti.'],
@@ -841,10 +1057,6 @@
     toast._t = setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%,16px)'; }, 2200);
   }
 
-  function imgTag(src, alt, cls = '') {
-    return `<div class="fallback-icon"><svg viewBox="0 0 64 64" class="w-16 h-16" fill="currentColor"><path d="M32 6l2 6h-4zM20 30q12-22 24 0zM10 36q6-12 12 0zM42 36q6-12 12 0z"/><rect x="18" y="30" width="28" height="22"/><rect x="8" y="36" width="16" height="16"/><rect x="40" y="36" width="16" height="16"/></svg></div>
-      <img src="${src}" alt="${alt}" loading="lazy" class="${cls}" onerror="this.remove()" />`;
-  }
 
   /* =====================================================================
      HERO: stars, countdown, weather
@@ -857,8 +1069,6 @@
     }
     s.innerHTML = h;
   })();
-  $('#heroImg').src = IMG.hero;
-  $('#heroImg').onerror = function () { this.remove(); };
 
   (function countdown() {
     // Sofia = UTC+2 in inverno
@@ -978,14 +1188,14 @@
   function renderBest() {
     $('#bestGrid').innerHTML = PLACES.map((p, i) => `
       <div class="tilt-wrap reveal" style="transition-delay:${i * 90}ms">
-        <button class="tilt place-card relative w-full text-left rounded-3xl overflow-hidden border border-gold/25 bg-night-800 aspect-[3/4] focus:outline-none focus-visible:ring-2 ring-pave" data-place="${p.id}" aria-label="Approfondisci: ${p.title}">
-          <div class="img-shell absolute inset-0">${imgTag(p.img, p.title, 'w-full h-full object-cover scale-110')}</div>
-          <div class="absolute inset-0 z-[2] bg-gradient-to-t from-night via-night/40 to-transparent"></div>
-          <div class="absolute top-4 left-4 right-4 z-[3] flex justify-between items-start depth">
+        <button class="tilt place-card group relative w-full text-left rounded-3xl overflow-hidden border border-gold/25 bg-night-800 aspect-[3/4] focus:outline-none focus-visible:ring-2 ring-pave" data-place="${p.id}" aria-label="Approfondisci: ${p.title}">
+          <div class="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.06]">${POSTERS[p.id]()}</div>
+          <div class="absolute inset-x-0 bottom-0 h-[58%] z-[2] bg-gradient-to-t from-night via-night/85 to-transparent"></div>
+          <div class="absolute top-10 left-6 right-6 z-[3] flex justify-between items-start depth">
             <span class="font-syne font-extrabold text-xs tracking-widest uppercase bg-gold text-night px-2.5 py-1 rounded-lg">${p.year}</span>
             <span class="grid place-items-center w-10 h-10 rounded-full glass"><i data-lucide="${p.icon}" class="w-5 h-5 text-gold"></i></span>
           </div>
-          <div class="absolute bottom-0 inset-x-0 z-[3] p-5 depth-2">
+          <div class="absolute bottom-0 inset-x-0 z-[3] p-6 pb-7 depth-2">
             <p class="text-xs uppercase tracking-[.25em] text-pave font-bold">${p.short}</p>
             <h3 class="font-cinzel font-bold text-2xl leading-tight mt-1">${p.title}</h3>
             <span class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-gold">Scopri di più <i data-lucide="arrow-up-right" class="w-4 h-4"></i></span>
@@ -1015,26 +1225,24 @@
     const p = PLACES.find(x => x.id === id); if (!p) return;
     lastFocus = document.activeElement;
     $('#modalContent').innerHTML = `
-      <div class="img-shell relative h-64 sm:h-96">
-        ${imgTag(p.img, p.title, 'w-full h-full object-cover')}
-        <div class="absolute inset-0 z-[2] bg-gradient-to-t from-night-800 via-night-800/30 to-transparent"></div>
-        <div class="absolute bottom-0 left-0 right-0 z-[3] p-6 sm:p-8">
-          <span class="font-syne font-extrabold text-xs tracking-widest uppercase bg-gold text-night px-2.5 py-1 rounded-lg">${p.year}</span>
-          <h3 id="modalTitle" class="font-cinzel font-bold text-3xl sm:text-5xl mt-3">${p.title}</h3>
+      <div class="grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <div class="relative h-72 sm:h-96 md:h-auto md:min-h-[560px] overflow-hidden md:rounded-l-3xl">
+          <div class="absolute inset-0">${POSTERS[p.id]()}</div>
         </div>
-      </div>
-      <div class="p-6 sm:p-8 grid md:grid-cols-[1.3fr_1fr] gap-8">
-        <div>
-          <p class="text-lg text-snow/90 leading-relaxed">${p.lead}</p>
-          <h4 class="font-syne uppercase tracking-[.25em] text-xs text-gold mt-6 mb-2 flex items-center gap-2"><i data-lucide="scroll-text" class="w-4 h-4"></i>La storia</h4>
-          <p class="text-snow/70 leading-relaxed">${p.story}</p>
-        </div>
-        <div>
-          <div class="rounded-2xl bg-night/60 border border-gold/20 p-5">
-            <h4 class="font-syne uppercase tracking-[.25em] text-xs text-gold mb-3 flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4"></i>Consigli da insider</h4>
-            <ul class="space-y-3 text-sm text-snow/80">${p.tips.map(t => `<li class="flex gap-2"><i data-lucide="sparkle" class="w-4 h-4 text-pave shrink-0 mt-0.5"></i>${t}</li>`).join('')}</ul>
+        <div class="p-6 sm:p-9 min-w-0">
+          <div class="flex flex-wrap items-center gap-2 pr-12">
+            <span class="font-syne font-extrabold text-xs tracking-widest uppercase bg-gold text-night px-2.5 py-1 rounded-lg">${p.year}</span>
+            <span class="text-xs uppercase tracking-[.25em] text-pave font-bold">${p.short}</span>
           </div>
-          <div class="mt-4 grid gap-2">${p.info.map(([ic, t]) => `<div class="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-3 text-sm"><i data-lucide="${ic}" class="w-4 h-4 text-gold"></i>${t}</div>`).join('')}</div>
+          <h3 id="modalTitle" class="font-cinzel font-bold text-3xl sm:text-4xl mt-3 leading-tight [text-wrap:balance]">${p.title}</h3>
+          <p class="text-lg text-snow/90 leading-relaxed mt-4">${p.lead}</p>
+          <h4 class="font-syne uppercase tracking-[.25em] text-xs text-gold mt-7 mb-2 flex items-center gap-2"><i data-lucide="scroll-text" class="w-4 h-4"></i>La storia</h4>
+          <p class="text-snow/70 leading-relaxed">${p.story}</p>
+          <div class="mt-7 rounded-2xl bg-night/60 border border-gold/20 p-5">
+            <h4 class="font-syne uppercase tracking-[.25em] text-xs text-gold mb-3 flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4"></i>Consigli da insider</h4>
+            <ul class="space-y-3 text-sm text-snow/80">${p.tips.map(t => `<li class="flex gap-2"><i data-lucide="sparkle" class="w-4 h-4 text-pave shrink-0 mt-0.5"></i><span>${t}</span></li>`).join('')}</ul>
+          </div>
+          <div class="mt-4 grid sm:grid-cols-3 gap-2">${p.info.map(([ic, t]) => `<div class="flex items-center gap-2.5 rounded-xl bg-white/5 px-3 py-3 text-sm"><i data-lucide="${ic}" class="w-4 h-4 text-gold shrink-0"></i><span class="min-w-0">${t}</span></div>`).join('')}</div>
         </div>
       </div>`;
     $('#modal').classList.remove('hidden-modal');
@@ -1262,7 +1470,7 @@
 
   function observeReveal() {
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
-    $$('.reveal:not(.in)').forEach(el => io.observe(el));
+    $$('.reveal:not(.in)').forEach(el => { if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('pre'); io.observe(el); } });
   }
 
   /* =====================================================================
@@ -1295,6 +1503,14 @@
     addEventListener('resize', () => { resize(); make(); });
     $('#snowToggle').addEventListener('click', () => { on = !on; store.set('snow', on); apply(); toast(on ? 'Neve attivata' : 'Neve disattivata'); });
   })();
+
+  /* Share: copia il link della guida */
+  const SHARE_URL = 'https://claude.ai/artifact/Cd3VMc1xaedWckTSKibuMs';
+  $('#shareBtn').addEventListener('click', () => {
+    const done = () => toast('Link copiato: mandalo alla crew!');
+    try { navigator.clipboard.writeText(SHARE_URL).then(done).catch(() => toast(SHARE_URL)); }
+    catch { toast(SHARE_URL); }
+  });
 
   /* =====================================================================
      INIT
