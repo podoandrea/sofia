@@ -151,7 +151,7 @@
       </div>
 
       <div class="min-w-0">
-        <div class="photo aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] rounded-sm" data-photo="hero"></div>
+        <div class="photo aspect-[4/3] rounded-sm" data-photo="hero"></div>
         <div class="mt-5 flex items-start gap-5 border-t hair pt-5">
           <i id="wxIcon" data-lucide="cloud-snow" class="w-7 h-7 text-snow/80 shrink-0"></i>
           <div class="min-w-0">
@@ -336,7 +336,7 @@
     </div>
     <div class="text-[12px] text-snow/35 md:text-right space-y-1">
       <p>Orari e prezzi possono cambiare: verificateli prima di partire.</p>
-      <p id="credits"></p>
+      <p id="credits" class="max-w-xl md:ml-auto leading-relaxed"></p>
     </div>
   </div>
 </footer>
@@ -357,14 +357,19 @@
    FOTO: inserisci qui le foto vere (percorso o URL) e i crediti.
    Se src è vuoto, al suo posto compare una lastra tipografica sobria.
    ====================================================================== */
+// Foto da Wikimedia Commons (licenze libere), scaricate in photos/ dal workflow
+// .github/workflows/fetch-photos.yml. Elenco completo e link in photos/sources.tsv.
 const PHOTOS = {
-  hero:    { src: '', alt: 'Sofia in inverno', cyr: 'София', credit: '' },
-  nevsky:  { src: '', alt: 'Cattedrale Aleksandr Nevskij', cyr: 'Александър Невски', credit: '' },
-  vitosha: { src: '', alt: 'Il Monte Vitosha innevato', cyr: 'Витоша', credit: '' },
-  serdica: { src: '', alt: 'Rovine romane di Serdica', cyr: 'Сердика', credit: '' },
-  vazov:   { src: '', alt: 'Teatro Nazionale Ivan Vazov', cyr: 'Народен театър', credit: '' },
-  klek:    { src: '', alt: 'Un klek shop in un seminterrato', cyr: 'Клек', credit: '' },
-  springs: { src: '', alt: 'Fontana di acqua minerale calda', cyr: 'Минерална вода', credit: '' }
+  hero:      { src: 'photos/hero.jpg', alt: 'Il centro di Sofia con il Monte Vitosha innevato sullo sfondo', cyr: 'София', credit: 'Deensel · CC BY 2.0', page: 'https://commons.wikimedia.org/wiki/File:Panoramic_view_over_central_Sofia_and_the_Vitosha_Mountain_2017-10-08.jpg' },
+  nevsky:    { src: 'photos/nevsky.jpg', alt: 'La cattedrale Aleksandr Nevskij con le cupole dorate', cyr: 'Александър Невски', credit: 'Julian Lupyan · pubblico dominio', page: 'https://commons.wikimedia.org/wiki/File:Saint_Alexander_Nevsky_Cathedral,_Fa%C3%A7ade_from_Northeast.jpg' },
+  vitosha:   { src: 'photos/vitosha.jpg', alt: 'La cima Cherni Vrah sul Monte Vitosha', cyr: 'Витоша', credit: 'Иван · CC BY-SA 4.0', page: 'https://commons.wikimedia.org/wiki/File:Cherni_Vrah_Vitosha_01.jpg' },
+  serdica:   { src: 'photos/serdica.jpg', alt: 'Le rovine romane di Serdica nel centro di Sofia', cyr: 'Сердика', credit: 'David Stanley · CC BY 2.0', page: 'https://commons.wikimedia.org/wiki/File:Ruins_of_Serdica_(48831910108).jpg' },
+  vazov:     { src: 'photos/vazov.jpg', alt: 'Il Teatro Nazionale Ivan Vazov', cyr: 'Народен театър', credit: 'Plamen Agov · CC BY-SA 3.0', page: 'https://commons.wikimedia.org/wiki/File:IvanVazov_National_Theatre_7.jpg' },
+  springs:   { src: 'photos/springs.jpg', alt: 'I rubinetti pubblici di acqua minerale calda vicino al Bagno Centrale', cyr: 'Минерална вода', credit: 'Jaimrsilva · CC BY-SA 4.0', page: 'https://commons.wikimedia.org/wiki/File:Sofia_Public_Mineral_Baths_(Sofia,_Bulgaria).jpg' },
+  boulevard: { src: 'photos/boulevard.jpg', alt: 'Vitosha Boulevard, la via pedonale del centro', cyr: 'Витоша булевард', credit: 'Јакша · CC BY-SA 4.0', page: 'https://commons.wikimedia.org/wiki/File:Vitosha_Boulevard,_Sofia,_view1.jpg' },
+  rotunda:   { src: 'photos/rotunda.jpg', alt: 'La Rotonda di San Giorgio in mattoni rossi', cyr: 'Ротонда Св. Георги', credit: 'Preslav · pubblico dominio', page: 'https://commons.wikimedia.org/wiki/File:StGeorgeRotundaSofia.JPG' },
+  market:    { src: 'photos/market.jpg', alt: 'Il mercato coperto Halite', cyr: 'Хали', credit: 'Suicasmo · CC BY-SA 4.0', page: 'https://commons.wikimedia.org/wiki/File:Central_Market_Hall_in_Sofia_20180224.jpg' },
+  klek:      { src: '', alt: 'Un klek shop in un seminterrato', cyr: 'Клек', credit: '' }
 };
 
 const TRAVELERS = [
@@ -375,7 +380,7 @@ const TRAVELERS = [
 ];
 
 const DAYS = [
-  { label: 'Giorno 1', date: 'Domenica 27 dicembre', short: '27 dic', title: 'Arrivo e Vitosha Boulevard',
+  { label: 'Giorno 1', photo: 'boulevard', date: 'Domenica 27 dicembre', short: '27 dic', title: 'Arrivo e Vitosha Boulevard',
     intro: 'Atterraggio, check-in e prima passeggiata in centro tra luci di Natale e una cena con musica tradizionale.',
     steps: [
       ['12:00', 'Arrivo all’aeroporto', 'Metro M4 dal Terminal 2 fino a Serdika, circa 20 minuti. Check-in e valigie in camera.'],
@@ -385,7 +390,7 @@ const DAYS = [
       ['17:30', 'Mercatino di Natale', 'Nel Giardino della Città, davanti al Teatro Ivan Vazov, se è ancora aperto: vin brulé (greyano vino) e dolci. In alternativa, le luci di piazza Nevskij.'],
       ['20:00', 'Cena tipica', 'Hadjidraganov’s Houses, con musica folk dal vivo, o Shtastlivetsa su Vitosha Blvd. Shopska salad, kavarma, rakia. Meglio prenotare.']
     ] },
-  { label: 'Giorno 2', date: 'Lunedì 28 dicembre', short: '28 dic', title: 'Storia e neve',
+  { label: 'Giorno 2', photo: 'rotunda', date: 'Lunedì 28 dicembre', short: '28 dic', title: 'Storia e neve',
     intro: 'Duemila anni di storia in pochi isolati, dalla Serdica romana alle cupole d’oro. Nel pomeriggio la neve del Monte Vitosha.',
     steps: [
       ['08:45', 'Colazione', 'Banitsa con boza, la bevanda fermentata tipica della colazione bulgara.'],
@@ -396,7 +401,7 @@ const DAYS = [
       ['14:00', 'Monte Vitosha', 'Taxi o bus 66 fino ad Aleko, circa 1.800 m: neve, vista sulla città e cioccolata calda. Rientro prima del buio.'],
       ['20:30', 'Cena e brindisi', 'Si brinda con "Наздраве!" (nazdrave), guardandosi negli occhi.']
     ] },
-  { label: 'Giorno 3', date: 'Martedì 29 dicembre', short: '29 dic', title: 'Sofia segreta',
+  { label: 'Giorno 3', photo: 'market', date: 'Martedì 29 dicembre', short: '29 dic', title: 'Sofia segreta',
     intro: 'La città fuori dalle cartoline: negozi al livello del marciapiede, acqua calda in strada, mercati e una serata a teatro.',
     steps: [
       ['10:00', 'Klek shops', 'Passeggiata tra Oborishte e il Doctor’s Garden alla ricerca dei negozi nei seminterrati.'],
@@ -491,8 +496,8 @@ function photoHTML(key) {
 }
 function fillPhotos(root = document) { $$('[data-photo]', root).forEach(el => { el.innerHTML = photoHTML(el.dataset.photo); }); }
 function renderCredits() {
-  const c = Object.values(PHOTOS).filter(p => p.src && p.credit).map(p => p.credit);
-  $('#credits').textContent = c.length ? 'Foto: ' + [...new Set(c)].join(' · ') : '';
+  const c = Object.values(PHOTOS).filter(p => p.src && p.credit);
+  $('#credits').innerHTML = c.length ? 'Foto da Wikimedia Commons: ' + c.map(p => `<a href="${p.page}" target="_blank" rel="noopener" class="underline decoration-white/20 hover:text-snow">${p.credit}</a>`).join(' · ') : '';
 }
 
 /* Countdown */
@@ -543,6 +548,7 @@ function renderDays() {
   $('#dayPanel').innerHTML = `
     <div class="grid gap-10 lg:grid-cols-[320px_1fr]">
       <div>
+        <div class="photo aspect-[4/3] rounded-sm mb-6" data-photo="${d.photo}"></div>
         <p class="text-[11px] uppercase tracking-[.25em] text-snow/40">${d.date}</p>
         <h3 class="mt-2 font-display text-3xl">${d.title}</h3>
         <p class="mt-4 text-[15px] leading-relaxed text-snow/60">${d.intro}</p>
@@ -555,6 +561,7 @@ function renderDays() {
           </li>`).join('')}
       </ol>
     </div>`;
+  fillPhotos($('#dayPanel'));
 }
 
 /* Places + modal */

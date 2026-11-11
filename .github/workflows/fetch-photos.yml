@@ -1,0 +1,50 @@
+name: Fetch photos
+
+# Downloads the freely licensed Wikimedia Commons photos listed in
+# photos/sources.tsv into photos/<name>.jpg and commits them.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - photos/sources.tsv
+      - .github/workflows/fetch-photos.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download and resize photos
+        run: |
+          set -u
+          UA="SofiaTripGuide/1.0 (personal travel page; GitHub Actions)"
+          failed=0
+          tail -n +2 photos/sources.tsv | while IFS=$'\t' read -r name url author license source; do
+            out="photos/${name}.jpg"
+            ok=0
+            for size in 1920px 1280px 960px; do
+              u="${url/1920px-/${size}-}"
+              if curl -fsSL --retry 3 --retry-delay 3 -A "$UA" -o "$out" "$u"; then ok=1; echo "OK  $name ($size)"; break; fi
+              sleep 2
+            done
+            if [ "$ok" = 0 ]; then echo "FAIL $name"; rm -f "$out"; fi
+            sleep 1
+          done
+          # Keep the page light: max 1600px on the long side, quality 80
+          for f in photos/*.jpg; do
+            [ -f "$f" ] && mogrify -resize '1600x1600>' -strip -interlace Plane -quality 80 "$f"
+          done
+          ls -la photos
+
+      - name: Commit photos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git add photos/*.jpg
+          if git diff --cached --quiet; then echo "No changes"; exit 0; fi
+          git commit -m "Add Sofia photos from Wikimedia Commons"
+          git push
