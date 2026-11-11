@@ -44,6 +44,7 @@
 
   <style>
     :root {
+      color-scheme: dark;
       --night: #0F172A;
       --gold: #D4AF37;
       --pave: #EAB308;
@@ -1170,8 +1171,19 @@
   $('#filterBtn').addEventListener('click', () => {
     onlyTodo = !onlyTodo; $('#filterBtn span').textContent = onlyTodo ? 'Mostra tutte' : 'Da fare'; renderChecklist();
   });
+  // Conferma in pagina (doppio tocco) invece di confirm(), che in alcuni contesti è bloccato
+  let resetArmed = null;
   $('#resetBtn').addEventListener('click', () => {
-    if (!confirm('Azzerare tutta la checklist di gruppo?')) return;
+    const btn = $('#resetBtn');
+    if (!resetArmed) {
+      btn.dataset.label = btn.innerHTML;
+      btn.innerHTML = 'Tocca ancora per azzerare';
+      btn.classList.add('bg-terra/30');
+      resetArmed = setTimeout(() => { btn.innerHTML = btn.dataset.label; btn.classList.remove('bg-terra/30'); resetArmed = null; icons(); }, 3000);
+      return;
+    }
+    clearTimeout(resetArmed); resetArmed = null;
+    btn.innerHTML = btn.dataset.label; btn.classList.remove('bg-terra/30'); icons();
     state = {}; store.set('checks', state); renderChecklist(); renderCrew(); updateProgress(); toast('Checklist azzerata');
   });
 
