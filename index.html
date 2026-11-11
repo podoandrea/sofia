@@ -531,7 +531,7 @@ const CHECKLIST = [
 ];
 const PACKING = [['p1', 'Piumino antivento'], ['p2', 'Maglia e leggings termici'], ['p3', 'Berretto, guanti touch, sciarpa'], ['p4', 'Scarponcini impermeabili antiscivolo'], ['p5', 'Calze di lana'], ['p6', 'Power bank'], ['p7', 'Burrocacao e crema mani'], ['p8', 'Carta d’identità e tessera sanitaria']];
 
-const SHARE_URL = 'https://claude.ai/artifact/Cd3VMc1xaedWckTSKibuMs';
+const SHARE_URL = location.protocol.startsWith('http') && !location.hostname.includes('claude') ? location.href : 'https://claude.ai/artifact/Cd3VMc1xaedWckTSKibuMs';
 
 /* ====================================================================== */
 const $ = (s, r = document) => r.querySelector(s);
